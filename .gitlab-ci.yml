@@ -10,6 +10,5 @@ test-hw0:
   script:
     - cd hw0
     - make
-    - output=$(./main)
-    - echo "Program output: $output"
-    - test "$output" = "42"
+    - './main | tee output.txt'
+    - 'test "$(tr -d "\n\r" < output.txt)" = "42"'
