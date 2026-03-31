@@ -10,3 +10,13 @@ test-hw0:
     - chmod +x ci/grade-hw0.sh
   script:
     - bash ci/grade-hw0.sh hw0
+
+test-prog0:
+  stage: test
+  image: ubuntu:22.04
+  before_script:
+    - apt-get update
+    - apt-get install -y build-essential make valgrind
+    - chmod +x ci/grade-prog0.sh
+  script:
+    - bash ci/grade-prog0.sh prog0
