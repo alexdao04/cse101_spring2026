@@ -7,8 +7,6 @@ test-hw0:
   before_script:
     - apt-get update
     - apt-get install -y build-essential make valgrind
+    - chmod +x ci/grade-hw0.sh
   script:
-    - cd hw0
-    - make
-    - './main | tee output.txt'
-    - 'test "$(tr -d "\n\r" < output.txt)" = "42"'
+    - bash ci/grade-hw0.sh hw0
