@@ -1,0 +1,15 @@
+stages:
+  - test
+
+test-hw0:
+  stage: test
+  image: ubuntu:22.04
+  before_script:
+    - apt-get update
+    - apt-get install -y build-essential make valgrind
+  script:
+    - cd hw0
+    - make
+    - output=$(./main)
+    - echo "Program output: $output"
+    - test "$output" = "42"
