@@ -1,8 +1,11 @@
-#include "stack.h"
 #include <stdio.h>
 
 int main(void) {
-    // TODO: implement
-    printf("Hello HW0\n");
+    FILE *f = fopen("output", "w");
+    if (!f) return 1;
+
+    fprintf(f, "Hello HW0\n");
+    fclose(f);
+
     return 0;
 }
