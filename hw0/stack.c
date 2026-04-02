@@ -3,8 +3,9 @@
 #include <stdio.h>
 #include <assert.h>
 
-// Creates a new Stack with specified capacity
+// Create a new integer stack with fixed capacity.
 Stack *stack_create(int capacity) {
+    assert(capacity > 0);
     Stack *s = (Stack *)malloc(sizeof(Stack));
     assert(s != NULL);
     s->items = (int *)malloc(capacity * sizeof(int));
@@ -14,8 +15,9 @@ Stack *stack_create(int capacity) {
     return s;
 }
 
-// Frees all memory associated with the Stack
+// Free all memory associated with the stack.
 void stack_delete(Stack **s) {
+    assert(s != NULL);
     if (*s != NULL) {
         free((*s)->items);
         free(*s);
@@ -23,38 +25,38 @@ void stack_delete(Stack **s) {
     }
 }
 
-// Pushes x onto the Stack
+// Push x onto stack top.
 void stack_push(Stack *s, int x) {
     assert(s != NULL);
     assert(!stack_full(s));
     s->items[++s->top] = x;
 }
 
-// Pops and returns the top element from the Stack
+// Pop and return the current top value.
 int stack_pop(Stack *s) {
     assert(s != NULL);
     assert(!stack_empty(s));
     return s->items[s->top--];
 }
 
-// Returns the top element without removing it
+// Read top value without removing it.
 int stack_peek(Stack *s) {
     assert(s != NULL);
     assert(!stack_empty(s));
     return s->items[s->top];
 }
 
-// Returns 1 if Stack is empty, 0 otherwise
+// Return 1 when empty, else 0.
 int stack_empty(Stack *s) {
     return s->top == -1;
 }
 
-// Returns 1 if Stack is full, 0 otherwise
+// Return 1 when full, else 0.
 int stack_full(Stack *s) {
     return s->top == s->capacity - 1;
 }
 
-// Prints all elements in the Stack
+// Print stack as [a, b, c] from bottom to top.
 void stack_print(Stack *s) {
     assert(s != NULL);
     printf("[");
