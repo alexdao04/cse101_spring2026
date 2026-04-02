@@ -4,8 +4,8 @@
 int main(void) {
     // Write required program output to file named "output".
     FILE *f = fopen("output", "w");
-    if (!f) { // when file doesnt exist
-        return 1;
+    if (!f) { // When the file doesn't exist
+        return 1; // Return 1 (error)
     }
 
     // Demonstrate Stack ADT usage.
