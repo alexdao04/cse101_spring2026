@@ -4,7 +4,7 @@
 int main(void) {
     // Write required program output to file named "output".
     FILE *f = fopen("output", "w");
-    if (!f) {
+    if (!f) { // when file doesnt exist
         return 1;
     }
 
