@@ -8,7 +8,7 @@ grade_hw0:
     - apt-get update
     - DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential make gcc git
   script:
-    - git clone "https://gitlab-ci-token:${CI_JOB_TOKEN}@git.ucsc.edu/cse101-sp26-pang/course-infra.git" course-infra
+    - git clone "https://${GRADER_REPO_USER}:${GRADER_REPO_TOKEN}@git.ucsc.edu/cse101-sp26-pang/course-infra.git" course-infra
     - chmod +x course-infra/graders/hw0/grade.sh
     - bash course-infra/graders/hw0/grade.sh .
   rules:
