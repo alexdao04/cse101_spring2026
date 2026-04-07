@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Name: Alexander Dao
+// Class: CSE 101, Prof. Alex Pang
+// Date: 4/7/2026
+
 // Tower of Hanoi: recursion in C
 // inputs: version number where 1 is standard ToH, 2 is bicolor ToH, and 3 is monochrome ToH with n number of disks or p number of pairs
 // outputs: semakequence of steps needed to transfer n disks from start peg to end peg, and total number of steps needed
@@ -57,8 +61,10 @@ static void print_disk_line(int disk) {
 static void run_standard(int n) {
 // helper function logging number of moves as well as moves themselves
 // You can only move 1 disk at a time. A move is indicated by the following string: Move disk n from peg i to peg j.
-
 		for(int i = 0; i < n; i++) { // loop through until we reach n disks
+			if(i == 0) { // base case, assumes there's no disks left to move
+				return;
+			}
 		// call recursive functions from elsewhere as needed...
 		}
 }
@@ -66,20 +72,32 @@ static void run_standard(int n) {
 static void run_bicolor(int pairs) {
 // helper function for the bicolor version of the problem
 // bicolor version: each disk has two colors, the disks must be stacked in same-size pairs and can be differing colors
-
 		for(int i = 0; i < pairs; i++) { // loop through until we reach the pair number
-
+			if(i == 0) { // base case, assumes there's no pairs left to move
+				return;
+			}	
 		}
 }
 
-// IGNORE BELOW FOR NOW
-// static void run_monochrome(int pairs);
-// THIS CAN BE FIGURED OUT LATER ONCE WE GET THE BASIC IMPLEMENTATION
+// static void run_monochrome(int pairs) {
+// // helper function for the monochrome problem ver
+// // we might implement this or not depending on how much time we got
+// }
 
-static int parse_positive_int(const char *s, int *out) { // *s represents the desired string to parse (disks/pairs from cli is a string)
-// *out points to the integer variable where the parsed value gets stored
-// helper function for parsing positive integers from cli (e.g. number of disks/pairs)
-
+static int parse_positive_int(const char *s, int *out) {
+// this helper function parses n/p from the command line
+// its an initial validity check (e.g. is n/p a positive integer)
+// returning 0 if parsing succeeded and -1 if it failed (e.g. if s is not a positive integer)
+		for(int i = 0; s[i] != '\0'; i++) {
+			// until we reach null terminator (s is a string)
+			// this reads each digit in the n/p field on command line
+			// if any character is not a digit (0-9), then we return -1 for invalid input
+			if(s[i] < '0' || s[i] > '9') { // s[i] is less than 0 or greater than 9
+				// our digits are strings technically so they're not actual ints but individual chars
+				return -1;
+			}
+		}
+		return 0; // assuming successful parsing for the n/p value, return 0
 }
 
 static void std_collect(int n, int from, int aux, int to, Move *out, int *len, int cap) {
@@ -91,6 +109,7 @@ static void std_collect(int n, int from, int aux, int to, Move *out, int *len, i
 		if(n == 0) { // base case, assumes there's no disks left to move
 			return;
 		}
+		
 		// call the function recursively
 		std_collect(n - 1, from, to, aux, out, len, cap); // move n - 1 disks from A to B
 		out[(*len)++] = (Move){.disk = n, .from = from, .to = to}; // move disk n from A to C
@@ -99,17 +118,27 @@ static void std_collect(int n, int from, int aux, int to, Move *out, int *len, i
 }
 
 static int solve_bicolor(int n, int from, int aux, int to, Move *out, int *len, int cap) {
+// bicolor tower of hanoi: how it works
+// To move n pairs of disks from peg A to peg C:
+// Move n - 1 pairs of disks from A to B
+// Move the nth pair of disks from A to C (two moves)
+// Move n - 1 pairs of disks from B to C
 		if(n == 0) { // assuming that there's no disks left to move
 			return 0;
 		}
+
 		int moves = 0; // we track moves needed to move n pairs of disks from peg A to peg C
 		moves += solve_bicolor(n - 1, from, to, aux, out, len, cap); // increment by # of moves needed to move n - 1 pairs of disks from A to B
-
+		moves += 2; // increment by 2 moves needed to move the nth pair from A to C
+		moves += solve_bicolor(n - 1, aux, from, to, out, len, cap); // increment by # of moves needed to move n - 1 pairs of disks from B to C
+		return moves; // increment by # of moves needed to move n - 1 pairs of disks from B to C
 }
 
-// IGNORE BELOW FOR NOW
-// static int solve_monochrome(/* args you need */);
-// THIS CAN BE FIGURED OUT LATER ONCE WE GET THE BASIC IMPLEMENTATION!
+// static int solve_monochrome(/* args you need */) {
+// // function for solving the monochrome version of the problem
+// // may or may not be implemented
+// }
+
 
 int main(int argc, char *argv[])
 {
