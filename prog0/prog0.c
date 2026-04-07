@@ -6,9 +6,9 @@
 // outputs: sequence of steps needed to transfer n disks from start peg to end peg, and total number of steps needed
 
 typedef struct { // struct for tracking each move (disk #, from peg, to peg)
-		int disk;
-		int from;
-		int to;
+		int disk; // disk number being moved
+		int from; // where the disk came from (peg number 1 2 3 for ABC)
+		int to; // where the disk is going to (peg number 1 2 3 for ABC)
 } Move;
 
 static void print_usage(void) {
@@ -56,11 +56,22 @@ static void print_disk_line(int disk) {
 
 static void run_standard(int n) {
 // helper function logging number of moves as well as moves themselves
+// You can only move 1 disk at a time. A move is indicated by the following string: Move disk n from peg i to peg j.
+
+		for(int i = 0; i < n; i++) { // loop through until we reach n disks
+		// call recursive functions from elsewhere as needed...
+			n = n - 1;
+			print_move_line()
+		}
 }
 
 static void run_bicolor(int pairs) {
 // helper function for the bicolor version of the problem
 // bicolor version: each disk has two colors, the disks must be stacked in same-size pairs and can be differing colors
+
+		for(int i = 0; i < pairs; i++) { // loop through until we reach the pair number
+
+		}
 }
 
 // IGNORE BELOW FOR NOW
@@ -70,6 +81,7 @@ static void run_bicolor(int pairs) {
 static int parse_positive_int(const char *s, int *out) { // *s represents the desired string to parse (disks/pairs from cli is a string)
 // *out points to the integer variable where the parsed value gets stored
 // helper function for parsing positive integers from cli (e.g. number of disks/pairs)
+
 }
 
 static void std_collect(int n, int from, int aux, int to, Move *out, int *len, int cap) {
