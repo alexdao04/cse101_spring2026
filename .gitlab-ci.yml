@@ -1,8 +1,10 @@
+
 stages:
   - grade
 
 grade_hw0:
   stage: grade
+  timeout: 1h
   image: ubuntu:24.04
   before_script:
     - apt-get update
@@ -14,3 +16,159 @@ grade_hw0:
   rules:
     - exists:
         - hw0/Makefile
+      changes:
+        - hw0/**/*
+
+grade_prog0:
+  stage: grade
+  timeout: 1h
+  image: ubuntu:24.04
+  before_script:
+    - apt-get update
+    - DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential make gcc git python3
+  script:
+    - git clone "https://${GRADER_REPO_USER}:${GRADER_REPO_TOKEN}@git.ucsc.edu/cse101-sp26-pang/course-infra.git" course-infra
+    - chmod +x course-infra/graders/prog0/grade.sh
+    - bash course-infra/graders/prog0/grade.sh .
+  rules:
+    - exists:
+        - prog0/Makefile
+      changes:
+        - prog0/**/*
+
+grade_hw1:
+  stage: grade
+  timeout: 1h
+  image: ubuntu:24.04
+  before_script:
+    - apt-get update
+    - DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential make gcc git python3
+  script:
+    - git clone "https://${GRADER_REPO_USER}:${GRADER_REPO_TOKEN}@git.ucsc.edu/cse101-sp26-pang/course-infra.git" course-infra
+    - chmod +x course-infra/graders/hw1/grade.sh
+    - bash course-infra/graders/hw1/grade.sh .
+  rules:
+    - exists:
+        - hw1/Makefile
+      changes:
+        - hw1/**/*
+
+grade_prog1:
+  stage: grade
+  timeout: 1h
+  image: ubuntu:24.04
+  before_script:
+    - apt-get update
+    - DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential make gcc git python3
+  script:
+    - git clone "https://${GRADER_REPO_USER}:${GRADER_REPO_TOKEN}@git.ucsc.edu/cse101-sp26-pang/course-infra.git" course-infra
+    - chmod +x course-infra/graders/prog1/grade.sh
+    - bash course-infra/graders/prog1/grade.sh .
+  rules:
+    - exists:
+        - prog1/Makefile
+      changes:
+        - prog1/**/*
+
+grade_hw2:
+  stage: grade
+  timeout: 1h
+  image: ubuntu:24.04
+  before_script:
+    - apt-get update
+    - DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential make gcc git python3
+  script:
+    - git clone "https://${GRADER_REPO_USER}:${GRADER_REPO_TOKEN}@git.ucsc.edu/cse101-sp26-pang/course-infra.git" course-infra
+    - chmod +x course-infra/graders/hw2/grade.sh
+    - bash course-infra/graders/hw2/grade.sh .
+  rules:
+    - exists:
+        - hw2/Makefile
+      changes:
+        - hw2/**/*
+
+grade_prog2:
+  stage: grade
+  timeout: 1h
+  image: ubuntu:24.04
+  before_script:
+    - apt-get update
+    - DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential make gcc git python3
+  script:
+    - git clone "https://${GRADER_REPO_USER}:${GRADER_REPO_TOKEN}@git.ucsc.edu/cse101-sp26-pang/course-infra.git" course-infra
+    - chmod +x course-infra/graders/prog2/grade.sh
+    - bash course-infra/graders/prog2/grade.sh .
+  rules:
+    - exists:
+        - prog2/Makefile
+      changes:
+        - prog2/**/*
+
+grade_hw3:
+  stage: grade
+  timeout: 1h
+  image: ubuntu:24.04
+  before_script:
+    - apt-get update
+    - DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential make gcc git python3
+  script:
+    - git clone "https://${GRADER_REPO_USER}:${GRADER_REPO_TOKEN}@git.ucsc.edu/cse101-sp26-pang/course-infra.git" course-infra
+    - chmod +x course-infra/graders/hw3/grade.sh
+    - bash course-infra/graders/hw3/grade.sh .
+  rules:
+    - exists:
+        - hw3/Makefile
+      changes:
+        - hw3/**/*
+
+grade_prog3:
+  stage: grade
+  timeout: 1h
+  image: ubuntu:24.04
+  before_script:
+    - apt-get update
+    - DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential make gcc git python3
+  script:
+    - git clone "https://${GRADER_REPO_USER}:${GRADER_REPO_TOKEN}@git.ucsc.edu/cse101-sp26-pang/course-infra.git" course-infra
+    - chmod +x course-infra/graders/prog3/grade.sh
+    - bash course-infra/graders/prog3/grade.sh .
+  rules:
+    - exists:
+        - prog3/Makefile
+      changes:
+        - prog3/**/*
+
+grade_hw4:
+  stage: grade
+  timeout: 1h
+  image: ubuntu:24.04
+  before_script:
+    - apt-get update
+    - DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential make gcc git python3
+  script:
+    - git clone "https://${GRADER_REPO_USER}:${GRADER_REPO_TOKEN}@git.ucsc.edu/cse101-sp26-pang/course-infra.git" course-infra
+    - chmod +x course-infra/graders/hw4/grade.sh
+    - bash course-infra/graders/hw4/grade.sh .
+  rules:
+    - exists:
+        - hw4/Makefile
+      changes:
+        - hw4/**/*
+
+grade_prog4:
+  stage: grade
+  timeout: 1h
+  image: ubuntu:24.04
+  before_script:
+    - apt-get update
+    - DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential make gcc git python3
+  script:
+    - git clone "https://${GRADER_REPO_USER}:${GRADER_REPO_TOKEN}@git.ucsc.edu/cse101-sp26-pang/course-infra.git" course-infra
+    - chmod +x course-infra/graders/prog4/grade.sh
+    - bash course-infra/graders/prog4/grade.sh .
+  rules:
+    - exists:
+        - prog4/Makefile
+      changes:
+        - prog4/**/*
+
