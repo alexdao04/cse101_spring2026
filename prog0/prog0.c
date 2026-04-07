@@ -16,28 +16,54 @@ typedef struct {
 		int to;
 } Move;
 
-static void print_usage(void);
+static void print_usage(void); {
+// usage message for how to run the program
+		printf("Usage: %s <version> <n/p>\n", 0);
+		printf("version: 1 for standard ToH, 2 for bicolor ToH, 3 for monochrome ToH \n");
+		printf("n/p: number of disks for standard ToH, number of pairs for bicolor\n");
+		return 0; // exit
+}
 
-static void print_not_implemented(void);
+static void print_not_implemented(void) {
+// message for reserved modes (e.g. bicolor)
+// we aren't going to worry about this yet until the basic ToH is implemented
+		printf("Mode not implemented yet.\n");
+		return 0; // exit
+}
 
-static void print_move_line(int disk, int from, int to);
+static void print_move_line(int disk, int from, int to) {
+// helper function for printing move info (helpful to debug)
+		printf("Move disk %d from peg %d to peg %d\n", disk, from, to);
+		return 0; // exit
+}
+
+// EACH HELPER FUNCTION ABOVE IS PRIMARILY FOR DEBUGGING PURPOSES. THANKS FOR UNDERSTANDING
 
 static void print_total_moves(int total);
+// helper function for printing total number of moves (calculation logic)
 
 static void print_peg_header(char peg_name);
+// helper function for printing peg header (e.g. Peg A, B, C)
 
 static void print_disk_line(int disk);
+// helper function for printing disk info
 
 static void run_standard(int n);
+// helper function logging number of moves as well as moves themselves
 
 static void run_bicolor(int pairs);
+// helper function for the bicolor version of the problem
+// bicolor version: each disk has two colors, the disks must be stacked in same-size pairs and can be differing colors
 
-static void run_monochrome(int pairs);
+// static void run_monochrome(int pairs);
+// THIS CAN BE FIGURED OUT LATER ONCE WE GET THE BASIC IMPLEMENTATION
+
 
 static int parse_positive_int(const char *s, int *out);
+// helper function for parsing positive integers from cli (e.g. number of disks/pairs)
 
 static void std_collect(int n, int from, int aux, int to, Move *out, int *len, int cap) {
-		if(n == 0) {
+		if(n == 0) { // base case, assumes there's no disks left to move
 			return;
 		}
 		std_collect(n - 1, from, to, aux, out, len, cap);
@@ -45,9 +71,14 @@ static void std_collect(int n, int from, int aux, int to, Move *out, int *len, i
 		std_collect(n - 1, aux, from, to, out, len, cap);
 }
 
-static int solve_bicolor(/* args you need */);
+static int solve_bicolor(int n, int from, int aux, int to, Move *out, int *len, int cap) {
+		if(n == 0) { // assuming that there's no disks left to move
+			return 0;
+		}
+}
 
-static int solve_monochrome(/* args you need */);
+// static int solve_monochrome(/* args you need */);
+// THIS CAN BE FIGURED OUT LATER ONCE WE GET THE BASIC IMPLEMENTATION!
 
 int main(int argc, char *argv[])
 {
