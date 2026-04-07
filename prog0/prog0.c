@@ -3,7 +3,7 @@
 
 // Tower of Hanoi: recursion in C
 // inputs: version number where 1 is standard ToH, 2 is bicolor ToH, and 3 is monochrome ToH with n number of disks or p number of pairs
-// outputs: sequence of steps needed to transfer n disks from start peg to end peg, and total number of steps needed
+// outputs: semakequence of steps needed to transfer n disks from start peg to end peg, and total number of steps needed
 
 typedef struct { // struct for tracking each move (disk #, from peg, to peg)
 		int disk; // disk number being moved
@@ -13,42 +13,42 @@ typedef struct { // struct for tracking each move (disk #, from peg, to peg)
 
 static void print_usage(void) {
 // usage message for how to run the program
-		printf("Usage: %s <version> <n/p>\n", argv[0]);
+		printf("Usage: %s <version> <n/p>\n", 0); // print usage msg with version (initialize at 0) and n/p info
 		// check args for validity (e.g. version is 1, 2, 3 for regular, bicolor, monochrome, n/p is a positive integer for disks/pairs)
 		printf("version: 1 for standard ToH, 2 for bicolor ToH, 3 for monochrome ToH \n");
 		printf("n/p: number of disks for standard ToH, number of pairs for bicolor\n");
-		return 0; // exit
+		return; // exit
 }
 
 static void print_not_implemented(void) {
 // message for reserved modes (e.g. bicolor)
 // we aren't going to worry about this yet until the basic ToH is implemented
 		printf("Mode not implemented yet.\n");
-		return 0; // exit
+		return; // exit
 }
 
 static void print_move_line(int disk, int from, int to) {
 // helper function for printing move info (helpful to debug)
 		printf("Move disk %d from peg %d to peg %d\n", disk, from, to);
-		return 0; // exit
+		return; // exit
 }
 
 static void print_total_moves(int total) {
 // helper function for printing total number of moves (calculation logic)
 		printf("Total moves: %d\n", total); // print total moves computed from recursive functions
-		return 0; // exit
+		return; // exit
 }
 
 static void print_peg_header(char peg_name) {
 // helper function for printing peg header (e.g. Peg A, B, C)
 		printf("Peg %c:\n", peg_name); // debugging purposes, tracks peg states at each step (e.g. A to C, B to C, etc.)
-		return 0; // exit
+		return; // exit
 }
 
 static void print_disk_line(int disk) {
 // helper function for printing disk info
 		printf("Disk %d\n", disk); // debugging purposes, tracks disk states at each step (e.g. which disk # is being moved)
-		return 0; // exit
+		return; // exit
 }
 
 // EACH HELPER FUNCTION ABOVE IS PRIMARILY FOR DEBUGGING PURPOSES. THANKS FOR UNDERSTANDING
@@ -60,8 +60,6 @@ static void run_standard(int n) {
 
 		for(int i = 0; i < n; i++) { // loop through until we reach n disks
 		// call recursive functions from elsewhere as needed...
-			n = n - 1;
-			print_move_line()
 		}
 }
 
