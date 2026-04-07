@@ -1,18 +1,20 @@
-**TOWER OF HANOI** CSE 101 Prof. Alex Pang
+**TOWER OF HANOI** 
+CSE 101 
+Prof. Alex Pang
 Alexander Dao
 
-Core Puzzle Idea
+Core Puzzle Idea 
 There are three pegs: A, B, and C.
 A move means taking the top disk from one peg and placing it on another peg.
 Only legal moves are allowed, based on the stacking rule of the selected mode.
 
-General Requirements (All Modes)
+General Requirements (All Modes) 
 Every printed move must represent a legal move from the current state.
 The internal state must remain consistent after each move.
 The final peg arrangement must match the goal condition of the selected mode.
 The output format must exactly match the format required by the assignment.
 
-Mode 1: Standard
+Mode 1: Standard 
 What the problem is
  This is the classic Tower of Hanoi.
 Rule
@@ -23,7 +25,7 @@ Goal
 Parameter meaning
  k = number of disks.
 
-Mode 2: Bicolor
+Mode 2: Bicolor 
 What the problem is
  Disks come in pairs that share the same physical size group.
 Rule
@@ -34,7 +36,7 @@ Goal
 Parameter meaning
  k = number of pairs.
 
-Mode 3: Monochrome
+Mode 3: Monochrome 
 What the problem is
 -This mode uses the same legal move behavior as bicolor, but has a different target arrangement.
 Rule
