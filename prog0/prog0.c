@@ -33,19 +33,26 @@ static void print_move_line(int disk, int from, int to) {
 		return 0; // exit
 }
 
-// EACH HELPER FUNCTION ABOVE IS PRIMARILY FOR DEBUGGING PURPOSES. THANKS FOR UNDERSTANDING
-
 static void print_total_moves(int total) {
 // helper function for printing total number of moves (calculation logic)
+		printf("Total moves: %d\n", total); // print total moves computed from recursive functions
+		return 0; // exit
 }
 
 static void print_peg_header(char peg_name) {
 // helper function for printing peg header (e.g. Peg A, B, C)
+		printf("Peg %c:\n", peg_name); // debugging purposes, tracks peg states at each step (e.g. A to C, B to C, etc.)
+		return 0; // exit
 }
 
 static void print_disk_line(int disk) {
 // helper function for printing disk info
+		printf("Disk %d\n", disk); // debugging purposes, tracks disk states at each step (e.g. which disk # is being moved)
+		return 0; // exit
 }
+
+// EACH HELPER FUNCTION ABOVE IS PRIMARILY FOR DEBUGGING PURPOSES. THANKS FOR UNDERSTANDING
+// THE REAL MEAT AND BONES LIES BELOW HERE
 
 static void run_standard(int n) {
 // helper function logging number of moves as well as moves themselves
@@ -60,13 +67,10 @@ static void run_bicolor(int pairs) {
 // static void run_monochrome(int pairs);
 // THIS CAN BE FIGURED OUT LATER ONCE WE GET THE BASIC IMPLEMENTATION
 
-
 static int parse_positive_int(const char *s, int *out) { // *s represents the desired string to parse (disks/pairs from cli is a string)
 // *out points to the integer variable where the parsed value gets stored
 // helper function for parsing positive integers from cli (e.g. number of disks/pairs)
-		
 }
-
 
 static void std_collect(int n, int from, int aux, int to, Move *out, int *len, int cap) {
 // For standard Tower of Hanoi, to move n disks from peg A to peg C:
