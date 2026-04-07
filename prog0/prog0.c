@@ -16,9 +16,10 @@ typedef struct {
 		int to;
 } Move;
 
-static void print_usage(void); {
+static void print_usage(void) {
 // usage message for how to run the program
-		printf("Usage: %s <version> <n/p>\n", 0);
+		printf("Usage: %s <version> <n/p>\n", argv[0]);
+		// check args for validity (e.g. version is 1, 2, 3 for regular, bicolor, monochrome, n/p is a positive integer for disks/pairs)
 		printf("version: 1 for standard ToH, 2 for bicolor ToH, 3 for monochrome ToH \n");
 		printf("n/p: number of disks for standard ToH, number of pairs for bicolor\n");
 		return 0; // exit
@@ -42,25 +43,33 @@ static void print_move_line(int disk, int from, int to) {
 static void print_total_moves(int total);
 // helper function for printing total number of moves (calculation logic)
 
+
 static void print_peg_header(char peg_name);
 // helper function for printing peg header (e.g. Peg A, B, C)
+
 
 static void print_disk_line(int disk);
 // helper function for printing disk info
 
+
 static void run_standard(int n);
 // helper function logging number of moves as well as moves themselves
+
 
 static void run_bicolor(int pairs);
 // helper function for the bicolor version of the problem
 // bicolor version: each disk has two colors, the disks must be stacked in same-size pairs and can be differing colors
 
+
+
+// IGNORE BELOW FOR NOW
 // static void run_monochrome(int pairs);
 // THIS CAN BE FIGURED OUT LATER ONCE WE GET THE BASIC IMPLEMENTATION
 
 
 static int parse_positive_int(const char *s, int *out);
 // helper function for parsing positive integers from cli (e.g. number of disks/pairs)
+
 
 static void std_collect(int n, int from, int aux, int to, Move *out, int *len, int cap) {
 		if(n == 0) { // base case, assumes there's no disks left to move
@@ -77,6 +86,7 @@ static int solve_bicolor(int n, int from, int aux, int to, Move *out, int *len, 
 		}
 }
 
+// IGNORE BELOW FOR NOW
 // static int solve_monochrome(/* args you need */);
 // THIS CAN BE FIGURED OUT LATER ONCE WE GET THE BASIC IMPLEMENTATION!
 
