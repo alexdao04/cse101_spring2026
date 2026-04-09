@@ -35,36 +35,9 @@ static void print_not_implemented(void) {
 		return; // exit
 }
 
-static void print_move_line(int disk, int from, int to) {
+static void print_move_line(int disk, char from, char to) {
 // helper function for printing move info (helpful to debug)
 		printf("Move disk %d from peg %c to peg %c\n", disk, from, to);
-		return; // exit
-}
-
-static void print_disk_line(int disk);
-// almost like a go to if you think about it
-// because this function is technically above print_disk_line
-// i have to declare it here again so that it can call the helper function
-
-static void print_total_moves(int total) {
-// helper function for printing total number of moves (calculation logic)
-		printf("\nHere's what's in pegC\n");
-		for(int i = 1; i <= total; i++) {
-				print_disk_line(i); // print disk info when all ops done
-		}
-		printf("\nThere are a total of %d moves required.\n", total); // print total moves computed from recursive functions
-		return; // exit
-}
-
-static void print_peg_header(char peg_name) {
-// helper function for printing peg header (e.g. Peg A, B, C)
-		printf("Peg %c:\n", peg_name); // debugging purposes, tracks peg states at each step (e.g. A to C, B to C, etc.)
-		return; // exit
-}
-
-static void print_disk_line(int disk) {
-// helper function for printing disk info
-		printf("disk %d\n", disk); // debugging purposes, tracks disk states at each step (e.g. which disk # is being moved)
 		return; // exit
 }
 
@@ -103,7 +76,11 @@ static void run_standard(int n) {
 // You can only move 1 disk at a time. A move is indicated by the following string: Move disk n from peg i to peg j.
 		printf("Solving standard Tower of Hanoi with %d disks.\n", n); // debugging purposes, tracks number of disks being moved
 		int total = solve_standard(n, 'A', 'B', 'C'); // n is number of disks, A B C for pegs
-		print_total_moves(total);
+		printf("\nHere's what's in pegC:\n"); // debugging purposes, tracks what's in pegC at the end of the moves
+			for(int i = 1; i <= n; i++) { // print disks in pegC from smallest to largest (1 to n)
+				printf("Disk %d\n", i);
+			}
+		printf("\nThere are a total of %d moves required.\n", total); // debugging purposes, tracks total number of moves needed to move n disks from A to C
 		return;
 }
 
@@ -113,7 +90,14 @@ static void run_bicolor(int p) {
 		printf("Solving bicolor Tower of Hanoi with %d pairs.\n", p); // debugging purposes, tracks number of pairs being moved
 		int len = 0;
 		int total = solve_bicolor(p, 'A', 'B', 'C', NULL, &len, 0);
-		print_total_moves(total);
+		printf("\nHere's what's in pegC:\n"); // debugging purposes, tracks what's in pegC at the end of the moves
+		for(int i = 1; i <= 2 * p; i++) { // print disks in pegC from smallest to largest (1 to 2*p since we have p pairs
+			printf("Disk %d\n", 2 * i - 1);
+			printf("Disk %d\n", 2 * i);
+		}
+		printf("disk %d.\n", 2*p); // print the last disk in pegC, which is the largest disk of size 2*p (since we have p pairs, the largest disk is 2*p)
+    	printf("disk %d.\n", 2*p - 1); // print the second to last disk in pegC, which is the other disk of size 2*p (since we have p pairs, the largest disk is 2*p and the second to last disk is 2*p - 1)
+		printf("\nThere are a total of %d moves required.\n", total);
 		return;
 }
 
@@ -160,7 +144,7 @@ int main(int argc, char *argv[])
 		int ver = atoi(argv[1]); // convert from string to int for version number
 		// args were originally strings so convert version # to int
 
-		if (ver < 1 || ver > 2) { // check if version number is valid (1, 2, or 3)
+		if (ver < 1 || ver > 3) { // check if version number is valid (1, 2, or 3)
 			print_not_implemented(); // then call helper function to print usage message
 			return 0; // error exit
 		}
