@@ -20,9 +20,9 @@ static void print_usage(void) {
 		// check args for validity
 		// version 1 is standard ToH, version 2 is bicolor ToH
 		// version 1 will interpret n disks whereas version 2 will interpret p pairs of disks (2 disks per pair)
-		printf("Usage: prog0 1 n, 1 is standard, n is number of disks\n");
-		printf("Usage: prog0 2 p, 2 is bicolor, p is number of pairs\n");
-		printf("Usage: prog0 3 n, 3 is monochrome, n is number of disks\n");
+		printf("Usage: prog0 1 n, 1 is standard,   n is number of disks\n");
+		printf("Usage: prog0 2 p, 2 is bicolor,    p is number of pairs\n");
+		printf("Usage: prog0 3 p, 3 is monochrome, p is number of pairs\n");
 		return; // exit
 }
 
@@ -37,7 +37,7 @@ static void print_not_implemented(void) {
 
 static void print_move_line(int disk, int from, int to) {
 // helper function for printing move info (helpful to debug)
-		printf("Move disk %d from peg %d to peg %d\n", disk, from, to);
+		printf("Move disk %d from peg %c to peg %c\n", disk, from, to);
 		return; // exit
 }
 
