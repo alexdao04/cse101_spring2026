@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 				run_bicolor(p); // run bicolor ToH with p pairs of disks
 		}
 		else if (ver == 3) {
-				print_not_implemented(); // we didn't implement this
+				print_not_implemented(); // helper because monochrome wasnt implemented
 		}
 		return 0; // exit the program when done
 }
