@@ -20,6 +20,7 @@ static void print_usage(void) {
 		// check args for validity
 		// version 1 is standard ToH, version 2 is bicolor ToH
 		// version 1 will interpret n disks whereas version 2 will interpret p pairs of disks (2 disks per pair)
+		printf("Use one of the following:\n");
 		printf("Version: 1 for standard ToH, 2 for bicolor ToH\n");
 		printf("n: number of disks for standard ToH\n p: number of pairs for bicolor\n");
 		return; // exit
@@ -30,7 +31,7 @@ static void print_not_implemented(void) {
 		if (1) { // placeholder condition for modes that haven't been implemented yet
 				// e.g. if version == 3 for monochrome ToH, then we would call this function to print the message and exit
 		}
-		printf("Mode not implemented.\n");
+		printf("Not implemented.\n");
 		return; // exit
 }
 
@@ -167,5 +168,9 @@ int main(int argc, char *argv[])
 		else if (argv[1][0] == '3') {
 				print_not_implemented(); // we didn't implement this
 		}
+		else if (argv[1][0] == '4') {
+				print_not_implemented(); // we didn't implement this
+		}
+
 		return 0; // exit the program when done
 }
