@@ -155,11 +155,12 @@ int main(int argc, char *argv[])
 			print_usage(); // then call helper function to print usage message
 			return 1; // error exit
 		}
-		if (argv[1][0] < '1' || argv[1][0] > '3' || argv[1][1] != '\0') { // check if version number is valid (1, 2, or 3)
-			print_usage(); // then call helper function to print usage message
-			return 1; // error exit
+		int ver = atoi(argv[1]);
+		if (ver < 1 || ver > 2) { // check if version number is valid (1, 2, or 3)
+			print_not_implemented(); // then call helper function to print usage message
+			return 0; // error exit
 		}
-		if (argv[1][0] == '1') {
+		if (ver == 1) {
 				int n = 0; // variable for number of disks
 				if (parse_positive_int(argv[2], &n) != 0) { // parse n from command line, check if it's a valid positive integer
 						print_usage(); // if not, print usage message
@@ -167,7 +168,7 @@ int main(int argc, char *argv[])
 				}
 				run_standard(n); // run standard ToH with n disks
 		}
-		else if (argv[1][0] == '2') {
+		else if (ver == 2) {
 				int p = 0; // variable for number of pairs of disks
 				if (parse_positive_int(argv[2], &p) != 0) { // parse p from command line, check if it's a valid positive integer
 						print_usage(); // if not, print usage message
@@ -175,12 +176,8 @@ int main(int argc, char *argv[])
 				}
 				run_bicolor(p); // run bicolor ToH with p pairs of disks
 		}
-		else if (argv[1][0] == '3') {
+		else if (ver == 3) {
 				print_not_implemented(); // we didn't implement this
 		}
-		else if (argv[1][0] == '4') {
-				print_not_implemented(); // we didn't implement this
-		}
-
 		return 0; // exit the program when done
 }
