@@ -155,7 +155,9 @@ int main(int argc, char *argv[])
 			print_usage(); // then call helper function to print usage message
 			return 1; // error exit
 		}
-		int ver = atoi(argv[1]);
+		int ver = atoi(argv[1]); // convert from string to int for version number
+		// args were originally strings so convert version # to int
+
 		if (ver < 1 || ver > 2) { // check if version number is valid (1, 2, or 3)
 			print_not_implemented(); // then call helper function to print usage message
 			return 0; // error exit
