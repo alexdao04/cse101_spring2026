@@ -7,26 +7,30 @@
 
 // Tower of Hanoi: recursion in C
 // inputs: version number where 1 is standard ToH, 2 is bicolor ToH, and 3 is monochrome ToH with n number of disks or p number of pairs
-// outputs: semakequence of steps needed to transfer n disks from start peg to end peg, and total number of steps needed
+// outputs: sequence of steps needed to transfer n disks from start peg to end peg, and total number of steps needed
 
 typedef struct { // struct for tracking each move (disk #, from peg, to peg)
 		int disk; // disk number being moved
-		int from; // where the disk came from (peg number 1 2 3 for ABC)
-		int to; // where the disk is going to (peg number 1 2 3 for ABC)
+		int from; // where the disk came from
+		int to; // where the disk is going to
 } Move;
 
 static void print_usage(void) {
-		printf("Usage: prog0 <version> <n/p>\n"); // print usage msg
-		// check args for validity (e.g. version is 1, 2, 3 for regular, bicolor, monochrome, n/p is a positive integer for disks/pairs)
-		printf("version: 1 for standard ToH, 2 for bicolor ToH, 3 for monochrome ToH \n");
-		printf("n/p: number of disks for standard ToH, number of pairs for bicolor\n");
+		printf("Usage: prog0 <version> <n or p>\n"); // print usage msg
+		// check args for validity
+		// version 1 is standard ToH, version 2 is bicolor ToH
+		// version 1 will interpret n disks whereas version 2 will interpret p pairs of disks (2 disks per pair)
+		printf("Version: 1 for standard ToH, 2 for bicolor ToH\n");
+		printf("n: number of disks for standard ToH\n p: number of pairs for bicolor\n");
 		return; // exit
 }
 
 static void print_not_implemented(void) {
-// message for reserved modes (e.g. bicolor)
-// we aren't going to worry about this yet until the basic ToH is implemented
-		printf("Mode not implemented yet.\n");
+// message for modes that havent been implemented like monochrome
+		if (1) { // placeholder condition for modes that haven't been implemented yet
+				// e.g. if version == 3 for monochrome ToH, then we would call this function to print the message and exit
+		}
+		printf("Mode not implemented.\n");
 		return; // exit
 }
 
@@ -56,39 +60,29 @@ static void print_disk_line(int disk) {
 
 static int solve_standard(int n, int from, int aux, int to) {
 // standard Tower of Hanoi recursion
-		if(n == 0) {
-				return 0;
+		if(n == 0) { // recursion case case
+				return 0; // exit
 		}
-
 		int moves = 0; // track moves needed to move n disks from peg A to peg C
 		moves += solve_standard(n - 1, from, to, aux); // first move n - 1 disks from A to B, increment moves by # of moves needed to move n - 1 disks from A to B 
-		print_move_line(n, from, to); // then move disk n from A to C
-		moves += 1; // increment moves by 1 for this move
+		print_move_line(n, from, to); // print move info for moving disk n from A to C (also helps for debugging)
+		moves += 1; // increment moves by 1 for this move (we're moving 1 disk from A to C)
 		moves += solve_standard(n - 1, aux, from, to); // then move n - 1 disks from B to C, increment moves by # of moves needed to move n - 1 disks from B to C
 		return moves; // and done
 }
 
 static int solve_bicolor(int p, int from, int aux, int to, Move *out, int *len, int cap) {
-// bicolor tower of hanoi: how it works
-// To move n pairs of disks from peg A to peg C:
-// Move n - 1 pairs of disks from A to B
-// Move the nth pair of disks from A to C (two moves)
-// Move n - 1 pairs of disks from B to C
-
+// This is similar to standard ToH except you there are n pairs of disks. Each pair has 2 disks of the same size but different colors, hence the name. Note that p pairs means you have 2n disks. Peg A initially contains the bicolored tower of disks. The goal is to move the tower to pegC. You don't need to maintain the same black/white ordering in pegC. The only change to the rules is that disks of the same size can be on top of each other.
 		if(p == 0) { // assuming that there's no pairs left to move
-			return 0;
+			return 0; 
 		}
 		int moves = 0; // we track moves needed to move n pairs of disks from peg A to peg C
-		moves += solve_bicolor(p - 1, from, to, aux, out, len, cap); // increment by # of moves needed to move n - 1 pairs of disks from A to B
-		moves += 2; // increment by 2 moves (instead of 1 like in standard) needed to move the nth pair from A to C
-		moves += solve_bicolor(p - 1, aux, from, to, out, len, cap); // increment by # of moves needed to move n - 1 pairs of disks from B to C
-		return moves; // increment by # of moves needed to move n - 1 pairs of disks from B to C
+		moves += solve_bicolor(p - 1, from, to, aux, out, len, cap); // move p - 1 pairs of disks from A to B, increment moves counter
+		print_move_line(p, from, to); // move disk p from A to C (helps w/ debugging)
+		moves += 2; // increment moves by 2 since we're working with 2 disks of the same size
+		moves += solve_bicolor(p - 1, aux, from, to, out, len, cap); // move p - 1 pairs of disks from B to C, increment moves counter
+		return moves; // done
 }
-
-// static int solve_monochrome(/* args you need */) {
-// // function for solving the monochrome version of the problem
-// // may or may not be implemented
-// }
 
 // EACH HELPER FUNCTION ABOVE IS PRIMARILY FOR DEBUGGING PURPOSES. THANKS FOR UNDERSTANDING
 // THE REAL MEAT AND BONES LIES BELOW HERE
@@ -109,11 +103,6 @@ static void run_bicolor(int p) {
 		print_total_moves(total);
 		return;
 }
-
-// static void run_monochrome(int p) {
-// // helper function for the monochrome problem ver
-// // we might implement this or not depending on how much time we got
-// }
 
 static int parse_positive_int(const char *s, int *out) {
 // this helper function parses n/p from the command line
@@ -137,11 +126,8 @@ static int parse_positive_int(const char *s, int *out) {
 }
 
 static void std_collect(int n, int from, int aux, int to, Move *out, int *len, int cap) {
-// For standard Tower of Hanoi, to move n disks from peg A to peg C:
-// Move n - 1 disks from A to B
-// Move disk n from A to C
-// Move n - 1 disks from B to C
-
+// this is a helper function for the standard ToH that collects moves into the out array instead of printing them
+// the helper function previously was for debugging whereas this actually does the moving logic for standard ToH
 		if(n == 0) { // base case, assumes there's no disks left to move
 			return;
 		}
@@ -162,8 +148,24 @@ int main(int argc, char *argv[])
 			print_usage(); // then call helper function to print usage message
 			return 1; // error exit
 		}
-
-		run_standard(argv[2][0] - '0'); // convert char digit to int for n (number of disks) and call helper function for standard ToH
-		run_bicolor(argv[2][0] - '0'); // convert char digit to int for p (number of pairs) and call helper function for bicolor ToH
-		return 0;
+		if (argv[1][0] == '1') {
+				int n = 0; // variable for number of disks
+				if (parse_positive_int(argv[2], &n) != 0) { // parse n from command line, check if it's a valid positive integer
+						print_usage(); // if not, print usage message
+						return 1; // error exit
+				}
+				run_standard(n); // run standard ToH with n disks
+		}
+		else if (argv[1][0] == '2') {
+				int p = 0; // variable for number of pairs of disks
+				if (parse_positive_int(argv[2], &p) != 0) { // parse p from command line, check if it's a valid positive integer
+						print_usage(); // if not, print usage message
+						return 1; // error exit
+				}
+				run_bicolor(p); // run bicolor ToH with p pairs of disks
+		}
+		else if (argv[1][0] == '3') {
+				print_not_implemented(); // we didn't implement this
+		}
+		return 0; // exit the program when done
 }
