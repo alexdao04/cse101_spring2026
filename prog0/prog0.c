@@ -16,13 +16,13 @@ typedef struct { // struct for tracking each move (disk #, from peg, to peg)
 } Move;
 
 static void print_usage(void) {
-		printf("Usage: prog0 <version> <n or p>\n"); // print usage msg
+		printf("Use one of the following:\n");
 		// check args for validity
 		// version 1 is standard ToH, version 2 is bicolor ToH
 		// version 1 will interpret n disks whereas version 2 will interpret p pairs of disks (2 disks per pair)
-		printf("Use one of the following:\n");
-		printf("Version: 1 for standard ToH, 2 for bicolor ToH\n");
-		printf("n: number of disks for standard ToH\n p: number of pairs for bicolor\n");
+		printf("Usage: prog0 1 n, 1 is standard, n is number of disks\n");
+		printf("Usage: prog0 2 p, 2 is bicolor, p is number of pairs\n");
+		printf("Usage: prog0 3 n, 3 is monochrome, n is number of disks\n");
 		return; // exit
 }
 
@@ -31,7 +31,7 @@ static void print_not_implemented(void) {
 		if (1) { // placeholder condition for modes that haven't been implemented yet
 				// e.g. if version == 3 for monochrome ToH, then we would call this function to print the message and exit
 		}
-		printf("Not implemented.\n");
+		printf("Not Implemented.\n");
 		return; // exit
 }
 
@@ -41,9 +41,18 @@ static void print_move_line(int disk, int from, int to) {
 		return; // exit
 }
 
+static void print_disk_line(int disk);
+// almost like a go to if you think about it
+// because this function is technically above print_disk_line
+// i have to declare it here again so that it can call the helper function
+
 static void print_total_moves(int total) {
 // helper function for printing total number of moves (calculation logic)
-		printf("Total moves: %d\n", total); // print total moves computed from recursive functions
+		printf("\nHere's what's in pegC\n");
+		for(int i = 1; i <= total; i++) {
+				print_disk_line(i); // print disk info when all ops done
+		}
+		printf("\nThere are a total of %d moves required.\n", total); // print total moves computed from recursive functions
 		return; // exit
 }
 
@@ -55,11 +64,11 @@ static void print_peg_header(char peg_name) {
 
 static void print_disk_line(int disk) {
 // helper function for printing disk info
-		printf("Disk %d\n", disk); // debugging purposes, tracks disk states at each step (e.g. which disk # is being moved)
+		printf("disk %d\n", disk); // debugging purposes, tracks disk states at each step (e.g. which disk # is being moved)
 		return; // exit
 }
 
-static int solve_standard(int n, int from, int aux, int to) {
+static int solve_standard(int n, char from, char aux, char to) {
 // standard Tower of Hanoi recursion
 		if(n == 0) { // recursion case case
 				return 0; // exit
@@ -72,14 +81,15 @@ static int solve_standard(int n, int from, int aux, int to) {
 		return moves; // and done
 }
 
-static int solve_bicolor(int p, int from, int aux, int to, Move *out, int *len, int cap) {
+static int solve_bicolor(int p, char from, char aux, char to, Move *out, int *len, int cap) {
 // This is similar to standard ToH except you there are n pairs of disks. Each pair has 2 disks of the same size but different colors, hence the name. Note that p pairs means you have 2n disks. Peg A initially contains the bicolored tower of disks. The goal is to move the tower to pegC. You don't need to maintain the same black/white ordering in pegC. The only change to the rules is that disks of the same size can be on top of each other.
 		if(p == 0) { // assuming that there's no pairs left to move
 			return 0; 
 		}
 		int moves = 0; // we track moves needed to move n pairs of disks from peg A to peg C
 		moves += solve_bicolor(p - 1, from, to, aux, out, len, cap); // move p - 1 pairs of disks from A to B, increment moves counter
-		print_move_line(p, from, to); // move disk p from A to C (helps w/ debugging)
+		print_move_line(2 * p - 1, from, to); // move disk 2*p - 1 from A to C (helps w/ debugging)
+		print_move_line(2 * p, from, to); // move disk 2*p from A to C (helps w/ debugging)
 		moves += 2; // increment moves by 2 since we're working with 2 disks of the same size
 		moves += solve_bicolor(p - 1, aux, from, to, out, len, cap); // move p - 1 pairs of disks from B to C, increment moves counter
 		return moves; // done
@@ -91,7 +101,7 @@ static int solve_bicolor(int p, int from, int aux, int to, Move *out, int *len, 
 static void run_standard(int n) {
 // helper function logging number of moves as well as moves themselves
 // You can only move 1 disk at a time. A move is indicated by the following string: Move disk n from peg i to peg j.
-		int total = solve_standard(n, 1, 2, 3); // n is number of disks, 1 2 3 for A B C
+		int total = solve_standard(n, 'A', 'B', 'C'); // n is number of disks, A B C for pegs
 		print_total_moves(total);
 		return;
 }
@@ -100,7 +110,7 @@ static void run_bicolor(int p) {
 // helper function for the bicolor version of the problem
 // bicolor version: each disk has two colors, the disks must be stacked in same-size pairs and can be differing colors
 		int len = 0;
-		int total = solve_bicolor(p, 1, 2, 3, NULL, &len, 0);
+		int total = solve_bicolor(p, 'A', 'B', 'C', NULL, &len, 0);
 		print_total_moves(total);
 		return;
 }
