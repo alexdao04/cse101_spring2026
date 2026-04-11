@@ -76,7 +76,7 @@ static void run_standard(int n) {
 // You can only move 1 disk at a time. A move is indicated by the following string: Move disk n from peg i to peg j.
 		printf("Solving standard Tower of Hanoi with %d disks.\n", n); // debugging purposes, tracks number of disks being moved
 		int total = solve_standard(n, 'A', 'B', 'C'); // n is number of disks, A B C for pegs
-		printf("\nHere's what's in pegC:\n"); // debugging purposes, tracks what's in pegC at the end of the moves
+		printf("\nHere's what's in pegC\n"); // debugging purposes, tracks what's in pegC at the end of the moves
 			for(int i = 1; i <= n; i++) { // print disks in pegC from smallest to largest (1 to n)
 				printf("Disk %d\n", i);
 			}
@@ -87,7 +87,7 @@ static void run_standard(int n) {
 static void run_bicolor(int p) {
 // helper function for the bicolor version of the problem
 // bicolor version: each disk has two colors, the disks must be stacked in same-size pairs and can be differing colors
-		printf("Solving bicolor Tower of Hanoi with %d pairs.\n", p); // debugging purposes, tracks number of pairs being moved
+		printf("Solving bicolor Tower of Hanoi with %d pair of disks.\n", p); // debugging purposes, tracks number of pairs being moved
 		int len = 0;
 		int total = solve_bicolor(p, 'A', 'B', 'C', NULL, &len, 0);
 		printf("\nHere's what's in pegC:\n"); // debugging purposes, tracks what's in pegC at the end of the moves
