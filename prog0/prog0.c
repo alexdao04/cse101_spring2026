@@ -80,8 +80,8 @@ static int solve_bicolor(int p, char from, char aux, char to) {
 		}
 		int moves = 0; // we track moves needed to move n pairs of disks from peg A to peg C
 		moves += solve_bicolor(p - 1, from, to, aux); // move p - 1 pairs of disks from A to B, increment moves counter
-		print_move_line(2 * p - 1, from, to); // move disk 2*p - 1 from A to C (helps w/ debugging)
 		print_move_line(2 * p, from, to); // move disk 2*p from A to C (helps w/ debugging)
+		print_move_line(2 * p - 1, from, to); // move disk 2*p - 1 from A to C (helps w/ debugging)
 		moves += 2; // increment moves by 2 since we're working with 2 disks of the same size
 		moves += reverse_bicolor(p - 1, aux, from, to); // move p - 1 pairs of disks from B to C, increment moves counter
 		return moves; // done
@@ -96,8 +96,8 @@ static int reverse_bicolor(int p, char from, char aux, char to) {
 		}
 		int moves = 0; // we track moves needed to move n pairs of disks from peg A to peg C
 		moves += reverse_bicolor(p - 1, from, to, aux); // move p - 1 pairs of disks from A to B, increment moves counter
-		print_move_line(2 * p, from, to); // move disk 2*p - 1 from A to C (helps w/ debugging)
-		print_move_line(2 * p - 1, from, to); // move disk 2*p from A to C (helps w/ debugging)
+		print_move_line(2 * p - 1, from, to); // move disk 2*p - 1 from A to C (helps w/ debugging)
+		print_move_line(2 * p, from, to); // move disk 2*p from A to C (helps w/ debugging)
 		moves += 2; // increment moves by 2 since we're working with 2 disks of the same size
 		moves += solve_bicolor(p - 1, aux, from, to); // move p - 1 pairs of disks from B to C, increment moves counter
 		return moves; // done
