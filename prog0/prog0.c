@@ -92,8 +92,8 @@ static void run_bicolor(int p) {
 		int total = solve_bicolor(p, 'A', 'B', 'C', NULL, &len, 0);
 		printf("\nHere's what's in pegC:\n"); // debugging purposes, tracks what's in pegC at the end of the moves
 		for(int i = 1; i <= 2 * p; i++) { // print disks in pegC from smallest to largest (1 to 2*p since we have p pairs
-			printf("Disk %d\n", 2 * i - 1);
-			printf("Disk %d\n", 2 * i);
+			printf("disk %d.\n", 2 * i - 1);
+			printf("disk %d.\n", 2 * i);
 		}
 		printf("disk %d.\n", 2*p); // print the last disk in pegC, which is the largest disk of size 2*p (since we have p pairs, the largest disk is 2*p)
     	printf("disk %d.\n", 2*p - 1); // print the second to last disk in pegC, which is the other disk of size 2*p (since we have p pairs, the largest disk is 2*p and the second to last disk is 2*p - 1)
