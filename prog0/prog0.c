@@ -51,7 +51,7 @@ static int solve_standard(int n, char from, char aux, char to) {
 		print_move_line(n, from, to); // print move info for moving disk n from A to C (also helps for debugging)
 		moves += 1; // increment moves by 1 for this move (we're moving 1 disk from A to C)
 		moves += solve_standard(n - 1, aux, from, to); // then move n - 1 disks from B to C, increment moves by # of moves needed to move n - 1 disks from B to C
-		return moves; // and done
+		return moves; // and done!
 }
 
 static int reverse_bicolor(int p, char from, char aux, char to); // static declaration
