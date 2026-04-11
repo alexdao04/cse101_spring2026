@@ -88,9 +88,6 @@ static void run_bicolor(int p) {
 // helper function for the bicolor version of the problem
 // bicolor version: each disk has two colors, the disks must be stacked in same-size pairs and can be differing colors
 		printf("Solving bicolor Tower of Hanoi with %d pair of disks.\n", p); // debugging purposes, tracks number of pairs being moved
-		if(p == 0) { // base case, assuming there's no pairs left to move
-			return;
-		}
 		int len = 0;
 		int total = solve_bicolor(p, 'A', 'B', 'C', NULL, &len, 0); // p is number of pairs, A B C for pegs, NULL and 0 for out array and cap since we're not actually collecting moves in an array for this version
 		printf("\nHere's what's in pegC\n"); // debugging purposes, tracks what's in pegC at the end of the moves
