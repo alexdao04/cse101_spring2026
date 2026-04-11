@@ -71,7 +71,8 @@ static int solve_bicolor(int p, char from, char aux, char to) {
 }
 
 static int reverse_bicolor(int p, char from, char aux, char to) {
-// This is similar to standard ToH except you there are n pairs of disks. Each pair has 2 disks of the same size but different colors, hence the name. Note that p pairs means you have 2n disks. Peg A initially contains the bicolored tower of disks. The goal is to move the tower to pegC. You don't need to maintain the same black/white ordering in pegC. The only change to the rules is that disks of the same size can be on top of each other.
+// handles the case in bicolor where the order of the disks in the pairs is reversed (e.g. peg A has disk 1 on top of disk 2, but peg B has disk 2 on top of disk 1). 
+// this is needed because in bicolor ToH, disks of the same size can be on top of each other, so we can have different orderings of the disks in the pairs. This function is similar to solve_bicolor but with the order of the disks reversed.
 		if(p == 0) { // assuming that there's no pairs left to move
 			return 0; 
 		}
@@ -80,7 +81,7 @@ static int reverse_bicolor(int p, char from, char aux, char to) {
 		print_move_line(2 * p, from, to); // move disk 2*p - 1 from A to C (helps w/ debugging)
 		print_move_line(2 * p - 1, from, to); // move disk 2*p from A to C (helps w/ debugging)
 		moves += 2; // increment moves by 2 since we're working with 2 disks of the same size
-		moves += solve_bicolor(p - 1, aux, from, to); // move p - 1 pairs of disks from B to C, increment moves counter
+		moves += reverse_bicolor(p - 1, aux, from, to); // move p - 1 pairs of disks from B to C, increment moves counter
 		return moves; // done
 }
 
