@@ -92,7 +92,7 @@ static void run_bicolor(int p) {
 			return;
 		}
 		int len = 0;
-		int total = solve_bicolor(p, 'A', 'B', 'C');
+		int total = solve_bicolor(p, 'A', 'B', 'C', NULL, &len, 0); // p is number of pairs, A B C for pegs, NULL and 0 for out array and cap since we're not actually collecting moves in an array for this version
 		printf("\nHere's what's in pegC\n"); // debugging purposes, tracks what's in pegC at the end of the moves
 		for(int i = 1; i < p; i++) { // print disks in pegC from smallest to largest (1 to 2*p since we have p pairs
 			printf("disk %d.\n", 2 * i - 1);
@@ -123,19 +123,6 @@ static int parse_positive_int(const char *s, int *out) {
 			}
 		}
 		return 0; // assuming successful parsing for the n/p value, return 0
-}
-
-static void std_collect(int n, int from, int aux, int to, Move *out, int *len, int cap) {
-// this is a helper function for the standard ToH that collects moves into the out array instead of printing them
-// the helper function previously was for debugging whereas this actually does the moving logic for standard ToH
-		if(n == 0) { // base case, assumes there's no disks left to move
-			return;
-		}
-		// call the function recursively
-		std_collect(n - 1, from, to, aux, out, len, cap); // move n - 1 disks from A to B
-		out[(*len)++] = (Move){.disk = n, .from = from, .to = to}; // move disk n from A to C and store the move in the out array, increment len for the next move
-		std_collect(n - 1, aux, from, to, out, len, cap); // move n - 1 disks from B to C
-		return;
 }
 
 int main(int argc, char *argv[])
