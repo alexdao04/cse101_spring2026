@@ -54,6 +54,21 @@ static int solve_standard(int n, char from, char aux, char to) {
 		return moves; // and done!
 }
 
+static void run_standard(int n) {
+// helper function logging number of moves as well as moves themselves
+// You can only move 1 disk at a time. A move is indicated by the following string: Move disk n from peg i to peg j.
+		printf("Solving standard Tower of Hanoi with %d disks.\n", n); // debugging purposes, tracks number of disks being moved
+		int total = solve_standard(n, 'A', 'B', 'C'); // n is number of disks, A B C for pegs
+		printf("\nHere's what's in pegC\n"); // debugging purposes, tracks what's in pegC at the end of the moves
+			for(int i = 1; i <= n; i++) { // print disks in pegC from smallest to largest (1 to n)
+				printf("disk %d.\n", i);
+			}
+		printf("\nThere are a total of %d moves required.\n", total); // debugging purposes, tracks total number of moves needed to move n disks from A to C
+		return;
+}
+
+// this is where we need to fix things up!
+
 static int reverse_bicolor(int p, char from, char aux, char to); // static declaration
 
 static int solve_bicolor(int p, char from, char aux, char to) {
@@ -70,7 +85,6 @@ static int solve_bicolor(int p, char from, char aux, char to) {
 		return moves; // done
 }
 
-// HERES YOUR PROBLEM YOU DRUNK FUCK
 // OK SO YOU REUSED THE SAME ALGORITHM FROM STANDARD FOR BICOLOR
 // THIS THING PROBABLY NEEDS 4 RODS RATHER THAN 3 PLUS SOME OTHER STUFF
 // REVIEW SPECS TOMORROW!
@@ -87,22 +101,6 @@ static int reverse_bicolor(int p, char from, char aux, char to) {
 		moves += 2; // increment moves by 2 since we're working with 2 disks of the same size
 		moves += reverse_bicolor(p - 1, aux, from, to); // move p - 1 pairs of disks from B to C, increment moves counter
 		return moves; // done
-}
-
-// EACH HELPER FUNCTION ABOVE IS PRIMARILY FOR DEBUGGING PURPOSES. THANKS FOR UNDERSTANDING
-// THE REAL MEAT AND BONES LIES BELOW HERE
-
-static void run_standard(int n) {
-// helper function logging number of moves as well as moves themselves
-// You can only move 1 disk at a time. A move is indicated by the following string: Move disk n from peg i to peg j.
-		printf("Solving standard Tower of Hanoi with %d disks.\n", n); // debugging purposes, tracks number of disks being moved
-		int total = solve_standard(n, 'A', 'B', 'C'); // n is number of disks, A B C for pegs
-		printf("\nHere's what's in pegC\n"); // debugging purposes, tracks what's in pegC at the end of the moves
-			for(int i = 1; i <= n; i++) { // print disks in pegC from smallest to largest (1 to n)
-				printf("disk %d.\n", i);
-			}
-		printf("\nThere are a total of %d moves required.\n", total); // debugging purposes, tracks total number of moves needed to move n disks from A to C
-		return;
 }
 
 static void run_bicolor(int p) {
