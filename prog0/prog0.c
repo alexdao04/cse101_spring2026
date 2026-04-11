@@ -78,7 +78,7 @@ static void run_standard(int n) {
 		int total = solve_standard(n, 'A', 'B', 'C'); // n is number of disks, A B C for pegs
 		printf("\nHere's what's in pegC\n"); // debugging purposes, tracks what's in pegC at the end of the moves
 			for(int i = 1; i <= n; i++) { // print disks in pegC from smallest to largest (1 to n)
-				printf("Disk %d\n", i);
+				printf("disk %d\n", i);
 			}
 		printf("\nThere are a total of %d moves required.\n", total); // debugging purposes, tracks total number of moves needed to move n disks from A to C
 		return;
@@ -90,8 +90,8 @@ static void run_bicolor(int p) {
 		printf("Solving bicolor Tower of Hanoi with %d pair of disks.\n", p); // debugging purposes, tracks number of pairs being moved
 		int len = 0;
 		int total = solve_bicolor(p, 'A', 'B', 'C', NULL, &len, 0);
-		printf("\nHere's what's in pegC:\n"); // debugging purposes, tracks what's in pegC at the end of the moves
-		for(int i = 1; i <= 2 * p; i++) { // print disks in pegC from smallest to largest (1 to 2*p since we have p pairs
+		printf("\nHere's what's in pegC\n"); // debugging purposes, tracks what's in pegC at the end of the moves
+		for(int i = 1; i < p; i++) { // print disks in pegC from smallest to largest (1 to 2*p since we have p pairs
 			printf("disk %d.\n", 2 * i - 1);
 			printf("disk %d.\n", 2 * i);
 		}
