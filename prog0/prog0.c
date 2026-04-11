@@ -67,7 +67,9 @@ static void run_standard(int n) {
 		return;
 }
 
-// this is where we need to fix things up!
+// The above is fine. This is where we need to fix things up!
+// solve_bicolor(): move p pairs whose top disk is the ODD numbered disk (2p-1) from "from" to "to" using "aux"
+// reverse_bicolor(): same but the top disk of each pair is the EVEN numbered disk (2p) - the order within each pair is flipped
 
 static int reverse_bicolor(int p, char from, char aux, char to); // static declaration
 
@@ -85,11 +87,10 @@ static int solve_bicolor(int p, char from, char aux, char to) {
 		return moves; // done
 }
 
-// OK SO YOU REUSED THE SAME ALGORITHM FROM STANDARD FOR BICOLOR
-// THIS THING PROBABLY NEEDS 4 RODS RATHER THAN 3 PLUS SOME OTHER STUFF
-// REVIEW SPECS TOMORROW!
 static int reverse_bicolor(int p, char from, char aux, char to) {
-// This is similar to standard ToH except you there are n pairs of disks. Each pair has 2 disks of the same size but different colors, hence the name. Note that p pairs means you have 2n disks. Peg A initially contains the bicolored tower of disks. The goal is to move the tower to pegC. You don't need to maintain the same black/white ordering in pegC. The only change to the rules is that disks of the same size can be on top of each other.
+// handles the case in bicolor where the order of the disks in the pairs is reversed (e.g. peg A has disk 1 on top of disk 2, but peg B has disk 2 on top of disk 1). 
+// this is needed because in bicolor ToH, disks of the same size can be on top of each other, so we can have different orderings of the disks in the pairs. 
+// This function is similar to solve_bicolor but with the order of the disks reversed.
 		if(p == 0) { // assuming that there's no pairs left to move
 			return 0; 
 		}
@@ -101,6 +102,9 @@ static int reverse_bicolor(int p, char from, char aux, char to) {
 		moves += solve_bicolor(p - 1, aux, from, to); // move p - 1 pairs of disks from B to C, increment moves counter
 		return moves; // done
 }
+// The above is also fine for now
+
+
 
 static void run_bicolor(int p) {
 // helper function for the bicolor version of the problem
@@ -108,14 +112,19 @@ static void run_bicolor(int p) {
 		printf("Solving bicolor Tower of Hanoi with %d pair of disks.\n", p); // debugging purposes, tracks number of pairs being moved
 		int total = solve_bicolor(p, 'A', 'B', 'C'); // p is number of pairs, A B C for pegs
 		printf("\nHere's what's in pegC\n"); // debugging purposes, tracks what's in pegC at the end of the moves
-		for(int i = 1; i < p; i++) { // print disks in pegC from smallest to largest (1 to 2*p since we have p pairs
-			printf("disk %d.\n", 2 * i - 1);
-			printf("disk %d.\n", 2 * i);
+		if(p == 1) {
+			printf("disk 1.\n");
+			printf("disk 2.\n");
+		} else {
+			for(int i = 1; i <= p - 1; i++) { // print disks in pegC from smallest to largest (1 to 2*p since we have p pairs
+				printf("disk %d.\n", 2 * i - 1);
+				printf("disk %d.\n", 2 * i);
+			}
+			printf("disk %d.\n", 2*p); // print the last disk in pegC, which is the largest disk of size 2*p (since we have p pairs, the largest disk is 2*p)
+			printf("disk %d.\n", 2*p - 1); // print the second to last disk in pegC, which is the other disk of size 2*p (since we have p pairs, the largest disk is 2*p and the second to last disk is 2*p - 1)
+			printf("\nThere are a total of %d moves required.\n", total);
+			return;
 		}
-		printf("disk %d.\n", 2*p); // print the last disk in pegC, which is the largest disk of size 2*p (since we have p pairs, the largest disk is 2*p)
-    	printf("disk %d.\n", 2*p - 1); // print the second to last disk in pegC, which is the other disk of size 2*p (since we have p pairs, the largest disk is 2*p and the second to last disk is 2*p - 1)
-		printf("\nThere are a total of %d moves required.\n", total);
-		return;
 }
 
 static int parse_positive_int(const char *s, int *out) {
