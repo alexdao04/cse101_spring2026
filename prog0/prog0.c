@@ -15,7 +15,7 @@ typedef struct { // struct for tracking each move (disk #, from peg, to peg)
 		int to; // where the disk is going to
 } Move;
 
-static void print_usage(void) {
+void print_usage(void) {
 		printf("Use one of the following:\n");
 		// check args for validity
 		// version 1 is standard ToH, version 2 is bicolor ToH
@@ -26,7 +26,7 @@ static void print_usage(void) {
 		return; // exit
 }
 
-static void print_not_implemented(void) {
+void print_not_implemented(void) {
 // message for modes that havent been implemented like monochrome
 		if (1) { // placeholder condition for modes that haven't been implemented yet
 				// e.g. if version == 3 for monochrome ToH, then we would call this function to print the message and exit
@@ -35,13 +35,13 @@ static void print_not_implemented(void) {
 		return; // exit
 }
 
-static void print_move_line(int disk, char from, char to) {
+void print_move_line(int disk, char from, char to) {
 // helper function for printing move info (helpful to debug)
 		printf("Move disk %d from peg %c to peg %c\n", disk, from, to);
 		return; // exit
 }
 
-static int solve_standard(int n, char from, char aux, char to) {
+int solve_standard(int n, char from, char aux, char to) {
 // standard Tower of Hanoi recursion
 		if(n == 0) { // recursion case case
 				return 0; // exit
@@ -54,7 +54,7 @@ static int solve_standard(int n, char from, char aux, char to) {
 		return moves; // and done!
 }
 
-static void run_standard(int n) {
+void run_standard(int n) {
 // helper function logging number of moves as well as moves themselves
 // You can only move 1 disk at a time. A move is indicated by the following string: Move disk n from peg i to peg j.
 		printf("Solving standard Tower of Hanoi with %d disks.\n", n); // debugging purposes, tracks number of disks being moved
@@ -71,9 +71,9 @@ static void run_standard(int n) {
 // solve_bicolor(): move p pairs whose top disk is the ODD numbered disk (2p-1) from "from" to "to" using "aux"
 // reverse_bicolor(): same but the top disk of each pair is the EVEN numbered disk (2p) - the order within each pair is flipped
 
-static int reverse_bicolor(int p, char from, char aux, char to); // static declaration
+int reverse_bicolor(int p, char from, char aux, char to); // static declaration
 
-static int solve_bicolor(int p, char from, char aux, char to) {
+int solve_bicolor(int p, char from, char aux, char to) {
 // This is similar to standard ToH except you there are n pairs of disks. Each pair has 2 disks of the same size but different colors, hence the name. Note that p pairs means you have 2n disks. Peg A initially contains the bicolored tower of disks. The goal is to move the tower to pegC. You don't need to maintain the same black/white ordering in pegC. The only change to the rules is that disks of the same size can be on top of each other.
 		if(p == 0) { // assuming that there's no pairs left to move
 			return 0; 
@@ -87,7 +87,7 @@ static int solve_bicolor(int p, char from, char aux, char to) {
 		return moves; // done
 }
 
-static int reverse_bicolor(int p, char from, char aux, char to) {
+int reverse_bicolor(int p, char from, char aux, char to) {
 // handles the case in bicolor where the order of the disks in the pairs is reversed (e.g. peg A has disk 1 on top of disk 2, but peg B has disk 2 on top of disk 1). 
 // this is needed because in bicolor ToH, disks of the same size can be on top of each other, so we can have different orderings of the disks in the pairs. 
 // This function is similar to solve_bicolor but with the order of the disks reversed.
@@ -103,7 +103,7 @@ static int reverse_bicolor(int p, char from, char aux, char to) {
 		return moves; // done
 }
 
-static void run_bicolor(int p) {
+void run_bicolor(int p) {
 // helper function for the bicolor version of the problem
 // bicolor version: each disk has two colors, the disks must be stacked in same-size pairs and can be differing colors
 		printf("Solving bicolor Tower of Hanoi with %d pair of disks.\n", p); // debugging purposes, tracks number of pairs being moved
@@ -123,7 +123,7 @@ static void run_bicolor(int p) {
 		printf("\nThere are a total of %d moves required.\n", total);
 }
 
-static int parse_positive_int(const char *s, int *out) {
+int parse_positive_int(const char *s, int *out) {
 // this helper function parses n/p from the command line
 // its an initial validity check (e.g. is n/p a positive integer)
 // returning 0 if parsing succeeded and -1 if it failed (e.g. if s is not a positive integer)
