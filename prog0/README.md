@@ -4,7 +4,7 @@
 **Alexander Dao** <br>
 <br>
 <br>
-
+FROM THE TA LAB MATERIAL (THANK YOU IOANNIS)<br>
 **Core Puzzle Idea** <br>
 There are three pegs: A, B, and C. <br>
 A move means taking the top disk from one peg and placing it on another peg.<br>
@@ -58,7 +58,7 @@ Run the program with two arguments after the executable name:<br>
 The meaning of k depends on the selected mode:<br>
 ·        Mode 1 — standard: k is the number of disks<br>
 ·        Mode 2 — bicolor: k is the number of pairs<br>
-·        Mode 3 — monochrome: k is the number of pairs
+·        Mode 3 — monochrome: k is the number of pairs<br>
 <br>
 **Recursion: the core idea in standard Hanoi**<br>
 A recursive function solves a problem by calling itself on a smaller version of the same problem. For standard Tower of Hanoi, to move n disks from peg A to peg C:<br>
