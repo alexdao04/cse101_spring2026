@@ -122,9 +122,8 @@ static void run_bicolor(int p) {
 			}
 			printf("disk %d.\n", 2*p); // print the last disk in pegC, which is the largest disk of size 2*p (since we have p pairs, the largest disk is 2*p)
 			printf("disk %d.\n", 2*p - 1); // print the second to last disk in pegC, which is the other disk of size 2*p (since we have p pairs, the largest disk is 2*p and the second to last disk is 2*p - 1)
-			printf("\nThere are a total of %d moves required.\n", total);
-			return;
 		}
+		printf("\nThere are a total of %d moves required.\n", total);
 }
 
 static int parse_positive_int(const char *s, int *out) {
