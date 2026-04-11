@@ -1,7 +1,7 @@
-**TOWER OF HANOI** 
-CSE 101 
-Prof. Alex Pang
-Alexander Dao
+**TOWER OF HANOI\n** 
+**CSE 101\n**
+**Prof. Alex Pang\n**
+**Alexander Dao\n**
 
 Core Puzzle Idea 
 There are three pegs: A, B, and C.
