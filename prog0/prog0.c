@@ -70,6 +70,10 @@ static int solve_bicolor(int p, char from, char aux, char to) {
 		return moves; // done
 }
 
+// HERES YOUR PROBLEM YOU DRUNK FUCK
+// OK SO YOU REUSED THE SAME ALGORITHM FROM STANDARD FOR BICOLOR
+// THIS THING PROBABLY NEEDS 4 RODS RATHER THAN 3 PLUS SOME OTHER STUFF
+// REVIEW SPECS TOMORROW!
 static int reverse_bicolor(int p, char from, char aux, char to) {
 // handles the case in bicolor where the order of the disks in the pairs is reversed (e.g. peg A has disk 1 on top of disk 2, but peg B has disk 2 on top of disk 1). 
 // this is needed because in bicolor ToH, disks of the same size can be on top of each other, so we can have different orderings of the disks in the pairs. This function is similar to solve_bicolor but with the order of the disks reversed.
