@@ -63,7 +63,15 @@ List newList(void) {
  * - Set *pL = NULL
  */
 void freeList(List* pL) {
-    // TODO
+    if(pL == NULL || *pL == NULL) { 
+        // handle empty list case
+        return;
+    }
+    if (pL != NULL && *pL != NULL) {
+        // we're assuming that the list is not empty
+        // we want to use free to remove all the nodes in the list
+        pL->front = NULL; // set front to null because 
+    }
 }
 
 
