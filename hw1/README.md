@@ -8,6 +8,7 @@ We have a bunch of functions in here. <br>
 Take a look at the following. These were pulled straight out of list.h.<br>
 I'll comment them out and detail my thinking of how I will implement each. <br>
 
+
 /**
  * TODO:
  * - Free all nodes
@@ -15,9 +16,12 @@ I'll comment them out and detail my thinking of how I will implement each. <br>
  * - Set *pL = NULL
  */
 void freeList(List* pL) {
-    if(pL == NULL || *pL == NULL);
-        // TODO
-        return 0;
+    // TODO
+    // start by setting up base case; when LL is pointing to an empty list
+    // return said empty list and exit out
+    // if list is not empty, we do the following:
+    // 
+    return 0;
 }
 
 
@@ -27,6 +31,11 @@ void freeList(List* pL) {
  */
 ListElement front(List L) {
     // TODO
+    // the overarching idea here is that we need to figure out a way to iterate
+    // through each element present in the list.
+    // although this is just for the front i think the core logic
+    // stays the same; recurse through a for loop to the target node (whether front, back, or Nth), 
+    // provide a base case and then we should be good
     return 0;
 }
 
@@ -37,6 +46,7 @@ ListElement front(List L) {
  */
 ListElement back(List L) {
     // TODO
+    // same thing here. reference front to get an idea
     return 0;
 }
 
@@ -47,6 +57,7 @@ ListElement back(List L) {
  */
 ListElement get(List L) {
     // TODO
+    // sliding pointer concept; we can review what we know from class for this one
     return 0;
 }
 
@@ -57,6 +68,7 @@ ListElement get(List L) {
  */
 bool equals(List A, List B) {
     // TODO
+    // i'll figure out what this does later
     return false;
 }
 
@@ -69,6 +81,9 @@ bool equals(List A, List B) {
  */
 void clear(List L) {
     // TODO
+    // delete all nodes and reset the fields
+    // not just free memory like earlier 
+    // (although that could become a helper function)
 }
 
 
@@ -78,6 +93,7 @@ void clear(List L) {
  */
 void set(List L, ListElement x) {
     // TODO
+    // figure this one out later
 }
 
 
@@ -87,6 +103,7 @@ void set(List L, ListElement x) {
  */
 void moveFront(List L) {
     // TODO
+    // what do they mean by cursor?
 }
 
 
@@ -96,6 +113,7 @@ void moveFront(List L) {
  */
 void moveBack(List L) {
     // TODO
+    // what does this do
 }
 
 
@@ -105,6 +123,7 @@ void moveBack(List L) {
  */
 void movePrev(List L) {
     // TODO
+    // not sure what this does
 }
 
 
@@ -114,6 +133,7 @@ void movePrev(List L) {
  */
 void moveNext(List L) {
     // TODO
+    // same thing here
 }
 
 
@@ -123,6 +143,7 @@ void moveNext(List L) {
  */
 void prepend(List L, ListElement x) {
     // TODO
+    // prepend should add a node at the beginning of the list
 }
 
 
@@ -132,6 +153,8 @@ void prepend(List L, ListElement x) {
  */
 void append(List L, ListElement x) {
     // TODO
+    // we saw this one in class. review whatever notes you have on that one
+    // add a node at the nth node type stuff
 }
 
 
@@ -141,6 +164,7 @@ void append(List L, ListElement x) {
  */
 void insertBefore(List L, ListElement x) {
     // TODO
+    // likely needs a prev (for DLL)
 }
 
 
@@ -150,6 +174,7 @@ void insertBefore(List L, ListElement x) {
  */
 void insertAfter(List L, ListElement x) {
     // TODO
+    // insert at next from last element, have last element point to NULL
 }
 
 
@@ -159,6 +184,7 @@ void insertAfter(List L, ListElement x) {
  */
 void deleteFront(List L) {
     // TODO
+    // delete front.
 }
 
 
@@ -167,7 +193,8 @@ void deleteFront(List L) {
  * Delete back node
  */
 void deleteBack(List L) {
-    // TODO
+    // delete the last node in the list
+    // recall the CDLL concept
 }
 
 
@@ -176,5 +203,5 @@ void deleteBack(List L) {
  * Delete cursor node
  */
 void delete(List L) {
-    // TODO
+    // delete the node currently pointed to
 }
