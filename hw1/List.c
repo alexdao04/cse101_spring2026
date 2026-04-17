@@ -138,14 +138,14 @@ bool equals(List A, List B) {
     // TODO
     if(A==NULL || B==NULL) return false;
     if(A->length != B->length) return false; // check if lists have the same length
-    Node *tempA = A->front; // load tempA with the front of list A
-    Node *tempB = B->front; // do the same thing so we can set up a comparison
+    Node tempA = A->front; // load tempA with the front of list A
+    Node tempB = B->front; // do the same thing so we can set up a comparison
     while(tempA != NULL && tempB != NULL) {
-        if((*tempA)->data != (*tempB)->data) { // double check if the data is the same
+        if(tempA->data != tempB->data) { // double check if the data is the same
             return false;
         }
-        tempA = (*tempA)->next; // move forward
-        tempB = (*tempB)->next; // same thing
+        tempA = tempA->next; // move forward
+        tempB = tempB->next; // same thing
     }
     return true;
 }
