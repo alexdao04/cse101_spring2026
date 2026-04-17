@@ -67,16 +67,21 @@ void freeList(List* pL) {
         // handle empty list case
         return;
     } while(*pL != NULL) {
-        Node *temp = (*pL) -> front; // point temp to front of list
+        Node temp = (*pL) -> front; // point temp to front of list
         while(temp != NULL) {
-            Node *next = (*temp) -> next; // create pointer to next node before freeing temp
+            Node next = temp->next; // create pointer to next node before freeing temp
             free(temp); // go through each node and free them one by one
             temp = next; // temp is now pointing to the next node in the list once that node was freed
             // this repeats until we reach the end where all nodes are freed and temp is null
             // you set temp to point the next node before freeing what was stored there to maintain the rest of the list structure
         }
         free(*pL); // free list object once all nodes freed
-        *pL = NULL; // pointer set to null after freed (no dangling ptrs)
+        (*pL)->front = NULL;
+        (*pL)->back = NULL;
+        (*pL)->cursor = NULL;
+        (*pL)->length = 0;
+        (*pL)->index = -1;
+        (*pL) = NULL; // pointer set to null after freed (no dangling ptrs)
     }
 }
 
@@ -162,15 +167,21 @@ bool equals(List A, List B) {
  */
 void clear(List L) {
     // TODO
-    if(length(L) == 0) {
+    if(L->length == 0) {
         return; // empty list
     } else {
-        Node *temp = L->front; // start at front of list
+        Node temp = L->front; // start at front of list
         while(temp != NULL) { // when list is not empty
-            Node *next = (*temp) -> next; // store the next node before freeing temp
+            Node next = temp->next; // store the next node before freeing temp
             free(temp); // free temp from memory
             temp = next; // temp moves to the next node in the list to remove the next node present
         }
+        // we need to reset front, back, cursor, length, and index fields
+        L->front = NULL;
+        L->back = NULL;
+        L->cursor = NULL;
+        L->length = 0;
+        L->index = -1; // cursor undefined, first element is 0 (remember that!)
     }
 }
 
@@ -257,8 +268,14 @@ void prepend(List L, ListElement x) {
     // TODO
     if(L->length == 0) { // empty list case
         Node N = newNode(x);
+        L->length++; // increment length of list, we're adding a node
         L->front = N;
         L->back = N; // front and back are the same node if empty list
+    } else {
+        Node N = newNode(x);
+        L->length++; // increment length of list
+        L->front->prev = N; // set the node before front to become N (we're inserting at the front)
+        N->next = L->front; // N's next is the old front node keeping the structure
     }
 }
 
@@ -270,13 +287,16 @@ void prepend(List L, ListElement x) {
 void append(List L, ListElement x) {
     // TODO
     if(L->length == 0) {
-        Node N = newNode(x);
+        Node N = newNode(x); // front and back are the same node when we have an empty list
+        L->length++; // increment length of list, we're adding a node
         L->front = N;
         L->back = N;
     } else {
-        Node N = newNode(x);
+        Node N = newNode(x); // create new node with data x
+        L->length++; // increment length of list since we're adding a node
         L->back->next = N; // append at the end of the list
         N->prev = L->back; // set the node before N to become back
+        L->back = N; // set back to become N since we're inserting at the back
     } // come back to this part
 }
 
@@ -291,6 +311,7 @@ void insertBefore(List L, ListElement x) {
         return;
     } else {
         Node N = newNode(x);
+        L->length++;
         N->next = L->cursor; // set N's next to where cursor points
         N->prev = L->cursor->prev; // stage prev at the node before cursor
         if(L->cursor->prev != NULL) { // check if node before cursor is not null
@@ -313,6 +334,7 @@ void insertAfter(List L, ListElement x) {
         return;
     } else {
         Node N = newNode(x);
+        L->length++;
         N->prev = L->cursor;
         N->next = L->cursor->next; // N points to the node after cursor
         if(L->cursor->next != NULL) { // if node after cursor not null
@@ -333,14 +355,14 @@ void deleteFront(List L) {
     if(L->length == 0) {
         return;
     } else {
-        Node *temp = L->front; // point temp to front of list
+        Node temp = L->front; // point temp to front of list
         // we want to do some pointer manipulation before we free temp
         if(L->front->next != NULL) { // if there's a node after the front
         // that means that we're not at the end of the list
             L->front->next->prev = NULL; // uhhhh set the node before front next to null since we're deleting the front
             // that was the old front node
-            free(temp);
             L->front = L->front->next; // point the empty front to the next node in the list 
+            free(temp);
         }
     }
 }
@@ -355,7 +377,7 @@ void deleteBack(List L) {
     if(L->length == 0) {
         return;
     } else {
-        Node *temp = L->back; // start by pointing temp to the back of the list
+        Node temp = L->back; // start by pointing temp to the back of the list
         if(L->back->prev != NULL) { // we're assuming that theres a node before the back node
             // this tells us we're not at the front of the list
             L->back->prev->next = NULL; // same logic as deleteFront kind of but reversed
@@ -376,7 +398,7 @@ void delete(List L) {
     if(L->length == 0 || L->index < 0) { // base case
         return;
     } else { // if the list is not empty and the cursor is valid
-        Node *temp = L->cursor; // temp points to where the cursor is
+        Node temp = L->cursor; // temp points to where the cursor is
         if(L->cursor->prev != NULL) { // if there's node before the cursor (we're not at the front)
             L->cursor->prev->next = L->cursor->next; // remember what the prof was saying in class about "marching" pointers
             // if there's a node before cursor, that node's next points to the node after cursor (skipping what's at cursor)
