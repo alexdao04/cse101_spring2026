@@ -1,5 +1,5 @@
 **LIST ADT IMPLEMENTATION** <br>
-**CSE 101** <br>
+**CSE 101 HW1** <br>
 **Prof. Alex Pang** <br>
 **Alexander Dao** <br>
 <br>
