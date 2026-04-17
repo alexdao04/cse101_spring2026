@@ -66,11 +66,13 @@ void freeList(List* pL) {
     if(pL == NULL || *pL == NULL) { 
         // handle empty list case
         return;
-    }
-    if (pL != NULL && *pL != NULL) {
-        // we're assuming that the list is not empty
-        // we want to use free to remove all the nodes in the list
-        pL->front = NULL; // set front to null because 
+    } while(*pL != NULL) {
+        Node *temp = *pL -> front; // point temp to front of list
+        while(temp != NULL) {
+            Node *next = temp -> next; // create pointer to next node before freeing temp
+            free(temp);
+            temp = next;
+        }
     }
 }
 
@@ -92,6 +94,12 @@ int position(List L) {
  */
 ListElement front(List L) {
     // TODO
+    if(L->length == 0) {
+        return 0; // handles empty list
+    }
+    else {
+        return L->front->data;
+    }
     return 0;
 }
 
@@ -102,6 +110,12 @@ ListElement front(List L) {
  */
 ListElement back(List L) {
     // TODO
+    if(L->length == 0) {
+        return 0; // empty list case
+    }
+    else {
+        return L->back->data;
+    }
     return 0;
 }
 
@@ -112,6 +126,11 @@ ListElement back(List L) {
  */
 ListElement get(List L) {
     // TODO
+    if(L->length == 0 || L->index < 0) { // empty list or undefined cursor (index at -1)
+        return 0;
+    } else {
+        return L->cursor->data;
+    }
     return 0;
 }
 
@@ -122,6 +141,11 @@ ListElement get(List L) {
  */
 bool equals(List A, List B) {
     // TODO
+    if(A->length != B->length) {
+        return false;
+    } else {
+
+    }
     return false;
 }
 
@@ -134,6 +158,16 @@ bool equals(List A, List B) {
  */
 void clear(List L) {
     // TODO
+    if(length(L) == 0) {
+        return; // empty list
+    } else {
+        Node *temp = L->front; // start at front of list
+        while(temp != NULL) { // when list is not empty
+            Node *next = temp -> next; // store the next node before freeing temp
+            free(temp); // free temp from memory
+            temp = next; // temp moves to the next node in the list to remove the next node present
+        }
+    }
 }
 
 
@@ -143,6 +177,12 @@ void clear(List L) {
  */
 void set(List L, ListElement x) {
     // TODO
+    if(L->length == 0 || L->index < 0) {
+        return; // empty list/undefined index
+    } else {
+        L->cursor->data = x; // else set cursor -> data = x as required
+    }
+    
 }
 
 
@@ -152,6 +192,12 @@ void set(List L, ListElement x) {
  */
 void moveFront(List L) {
     // TODO
+    if(L->length == 0) {
+        return; // empty list case
+    } else {
+        L->cursor = L->front;
+        L->index = 0; // set index to 0 where the front is
+    }
 }
 
 
@@ -161,6 +207,12 @@ void moveFront(List L) {
  */
 void moveBack(List L) {
     // TODO
+    if(L->length == 0) {
+        return;
+    } else {
+        L->cursor = L->back;
+        L->index = L->length - 1; // move back index (length -1 is like i-- incrementing)
+    }
 }
 
 
@@ -170,6 +222,12 @@ void moveBack(List L) {
  */
 void movePrev(List L) {
     // TODO
+    if(L->length == 0 || L->index <= 0) {
+        return;
+    } else {
+        L->cursor = L->cursor->prev;
+        L->index--; // move back index
+    }
 }
 
 
@@ -179,6 +237,12 @@ void movePrev(List L) {
  */
 void moveNext(List L) {
     // TODO
+    if(L->length == 0 || L->index >= L->length - 1) {
+        return;
+    } else {
+        L->cursor = L->cursor->next;
+        L->index++; // move forward index
+    }
 }
 
 
@@ -188,6 +252,12 @@ void moveNext(List L) {
  */
 void prepend(List L, ListElement x) {
     // TODO
+    if(L->length == 0) { // empty list case
+        Node N = newNode(x);
+        L->front = N;
+        L->back = N; // front and back are the same node if empty list
+
+    }
 }
 
 
@@ -197,6 +267,11 @@ void prepend(List L, ListElement x) {
  */
 void append(List L, ListElement x) {
     // TODO
+    if(L->length == 0) {
+        Node N = newNode(x);
+        L->front = N;
+        L->back = N;
+    }
 }
 
 
@@ -206,6 +281,9 @@ void append(List L, ListElement x) {
  */
 void insertBefore(List L, ListElement x) {
     // TODO
+    if(L->length == 0 || L->index < 0) {
+        return;
+    }
 }
 
 
@@ -215,6 +293,9 @@ void insertBefore(List L, ListElement x) {
  */
 void insertAfter(List L, ListElement x) {
     // TODO
+    if(L->length == 0 || L->index < 0) {
+        return;
+    }
 }
 
 
@@ -224,6 +305,9 @@ void insertAfter(List L, ListElement x) {
  */
 void deleteFront(List L) {
     // TODO
+    if(L->length == 0) {
+        return;
+    }
 }
 
 
@@ -233,6 +317,9 @@ void deleteFront(List L) {
  */
 void deleteBack(List L) {
     // TODO
+    if(L->length == 0) {
+        return;
+    }
 }
 
 
@@ -242,6 +329,9 @@ void deleteBack(List L) {
  */
 void delete(List L) {
     // TODO
+    if(L->length == 0 || L->index < 0) {
+        return;
+    }
 }
 
 
