@@ -63,12 +63,10 @@ List newList(void) {
  * - Set *pL = NULL
  */
 void freeList(List* pL) {
-    if(pL == NULL || *pL == NULL) { 
-        // handle empty list case
-        return;
-    }
+    if(pL == NULL || *pL == NULL) return; // empty list case
     clear(*pL); // call clear helper function
     free(*pL); // call free on the list object when done
+    *pL = NULL; // set pL (the pointer to the list) to null
 }
 
 
