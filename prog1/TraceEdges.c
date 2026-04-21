@@ -32,7 +32,7 @@ bool inBounds(int r, int c) {
 int countNeighbors(int r, int c) {
     // Loop over 4 directions using dr, dc
     // Count neighbors where grid[nr][nc] == 1
-
+    
     return 0; // placeholder
 }
 
