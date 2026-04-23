@@ -64,7 +64,16 @@ bool getNext(int r, int c, int* nr, int* nc) {
     // If found:
     //   set (*nr, *nc)
     //   return true
-
+    for(int i = 0; i < 4; i++) {
+        int nextRow = r + dr[i]; // row pos + direction change
+        int nextCol = c + dc[i]; // col pos + direction change
+        if(inBounds(nextRow, nextCol) && grid[nextRow][nextCol] == 1 && !visited[nextRow][nextCol]) { // if pixel in bounds is edge and has not ever been visited before
+            *nr = nextRow;
+            *nc = nextCol;
+            return true; // we found a valid next move
+            // return true and move to the next pixel position
+        }
+    }
     return false;
 }
 
@@ -105,6 +114,15 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------------
     //
     // put your code here
+    // variables available to use: grid, visited, rows, cols, dr, dc
+    for(int i = 0; i < rows; i++) { // there is a problem with this; i dont like nested for loops
+        for(int j = 0; j < cols; j++) {
+            if(grid[i][j] == 1) { // if we find an edge pixel
+                visited[i][j] = true; // mark it as visited
+                break; // break out of the loop to start tracing the path from this pixel
+            }
+        }
+    }
     List path = newList();
 
 
@@ -115,6 +133,26 @@ int main(int argc, char* argv[]) {
     // --------------------------------------------------------
     //
     // put your code here
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < cols; j++) {
+            if(grid[i][j] == 1) {
+                int currentRow = i;
+                int currentCol = j;
+                append(path, currentRow);
+                append(path, currentCol);
+                visited[currentRow][currentCol] = true; // mark the starting pixel as visited
+                int nextRow, nextCol;
+                while(getNext(currentRow, currentCol, &nextRow, &nextCol)) {
+                    append(path, nextRow);
+                    append(path, nextCol);
+                    visited[nextRow][nextCol] = true; // mark the next pixel as visited
+                    currentRow = nextRow; // move to the next pixel
+                    currentCol = nextCol;
+                }
+            }
+            printList(out, path);
+        }
+    }
 
     // Cleanup
     freeList(&path);
