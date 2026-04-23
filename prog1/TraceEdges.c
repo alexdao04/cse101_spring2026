@@ -28,12 +28,21 @@ bool inBounds(int r, int c) {
 // surround (r, c)
 // ------------------------------------------------------------
 //
-// complete the function below
+// complete the function below!
 int countNeighbors(int r, int c) {
     // Loop over 4 directions using dr, dc
     // Count neighbors where grid[nr][nc] == 1
-    
-    return 0; // placeholder
+    int count = 0; // neighbor count
+    for(int i = 0; i < 4; i++) {
+        int nr = r + dr[i]; // neighbor row handling (r is current row, dr[i] the change in row for direction i)
+        int nc = c + dc[i]; // neighbor column handling (c is current column, dc[i] the change in column for direction i)
+        if(inBounds(nr, nc) && grid[nr][nc] == 1) { // check if neighbor in bounds and is an edge pixel
+            // increment for each valid neighbor 
+            count++;
+        }
+    }
+    return count; // return how many neighbors are edge pixels
+    // this is how we know if we found the outline of the image
 }
 
 // ------------------------------------------------------------
