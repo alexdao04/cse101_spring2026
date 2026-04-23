@@ -115,14 +115,36 @@ int main(int argc, char* argv[]) {
     //
     // put your code here
     // variables available to use: grid, visited, rows, cols, dr, dc
+    int endPointFirstRow = -1;
+    int endPointFirstCol = -1;
+    int endPointSecondRow = -1;
+    int endPointSecondCol = -1;
+
     for(int i = 0; i < rows; i++) { // there is a problem with this; i dont like nested for loops
         for(int j = 0; j < cols; j++) {
-            if(grid[i][j] == 1) { // if we find an edge pixel
-                visited[i][j] = true; // mark it as visited
-                break; // break out of the loop to start tracing the path from this pixel
+            if(grid[i][j] == 1 || countNeighbors(i, j) == 1) { // if we find an edge pixel, we can start our path from there
+               if(endPointFirstRow == -1) { // if we haven't found the first endpoint yet, set it to the current pixel
+                   endPointFirstRow = i;
+                   endPointFirstCol = j;
+               } else { // otherwise, we found the second endpoint, so set it to the current pixel and break out of the loop
+                   endPointSecondRow = i;
+                   endPointSecondCol = j;
+               }
             }
         }
     }
+
+    int startRow;
+    int startCol;
+
+    if(endPointFirstRow < endPointSecondRow || (endPointFirstRow == endPointSecondRow && endPointFirstCol < endPointSecondCol)) { // if the first endpoint is above or to the left of the second endpoint, we can start from the first endpoint
+        startRow = endPointFirstRow;
+        startCol = endPointFirstCol;
+    } else { // otherwise, we start from the second endpoint
+        startRow = endPointSecondRow;
+        startCol = endPointSecondCol;
+    }
+
     List path = newList();
 
 
@@ -130,28 +152,33 @@ int main(int argc, char* argv[]) {
     // TODO 4:
     // Prints the ordered list of edge pixels from starting point
     // to ending point.
-    // --------------------------------------------------------
+    // ------------------------------------------------------------
     //
     // put your code here
-    for(int i = 0; i < rows; i++) {
-        for(int j = 0; j < cols; j++) {
-            if(grid[i][j] == 1) {
-                int currentRow = i;
-                int currentCol = j;
-                append(path, currentRow);
-                append(path, currentCol);
-                visited[currentRow][currentCol] = true; // mark the starting pixel as visited
-                int nextRow, nextCol;
-                while(getNext(currentRow, currentCol, &nextRow, &nextCol)) {
-                    append(path, nextRow);
-                    append(path, nextCol);
-                    visited[nextRow][nextCol] = true; // mark the next pixel as visited
-                    currentRow = nextRow; // move to the next pixel
-                    currentCol = nextCol;
-                }
-            }
-            printList(out, path);
-        }
+    int id = startRow * cols + startCol; // calculate the id of the starting pixel (row * number of columns + column)
+    append(path, id); // add the starting pixel id to the path list
+    visited[startRow][startCol] = true; // mark the starting pixel as visited
+
+    int currentRow = startRow;
+    int currentCol = startCol;
+    int nextRow;
+    int nextCol;
+
+    while(getNext(currentRow, currentCol, &nextRow, &nextCol)) { // while we can find a next valid move
+        id = nextRow * cols + nextCol; // calculate the id of the next pixel (row * number of columns + column)
+        append(path, id); // add the id to the path list
+        visited[nextRow][nextCol] = true; // mark the next pixel as visited
+        currentRow = nextRow; // move to the next pixel row
+        currentCol = nextCol; // move to the next pixel column
+    }
+
+    moveFront(path); // move cursor to the front of the path list
+    while(position(path) >= 0) { // while the cursor is defined
+        int id = get(path); // get the current pixel id from the path list
+        int row = id / cols; // calculate row from id
+        int col = id % cols; // calculate column from id
+        fprintf(out, "(%d,%d)\n", row, col); // print the row and column of the current pixel to the output file
+        moveNext(path); // move cursor to the next position in the path list
     }
 
     // Cleanup

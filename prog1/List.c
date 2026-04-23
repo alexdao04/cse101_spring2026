@@ -426,5 +426,5 @@ void printList(FILE* out, List L) {
         if (N->next != NULL) fprintf(out, ", ");
         N = N->next;
     }
-    fprintf(out, ")");
+    fprintf(out, ")\n");
 }
