@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
 
     for(int i = 0; i < rows; i++) { // there is a problem with this; i dont like nested for loops
         for(int j = 0; j < cols; j++) {
-            if(grid[i][j] == 1 || countNeighbors(i, j) == 1) { // if we find an edge pixel, we can start our path from there
+            if(grid[i][j] == 1 && countNeighbors(i, j) == 1) { // if we find an edge pixel, we can start our path from there
                if(endPointFirstRow == -1) { // if we haven't found the first endpoint yet, set it to the current pixel
                    endPointFirstRow = i;
                    endPointFirstCol = j;
