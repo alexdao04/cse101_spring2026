@@ -64,8 +64,8 @@ bool getNext(int r, int c, int* nr, int* nc) {
     // If found:
     //   set (*nr, *nc)
     //   return true
-    for(int i = 0; i < 4; i++) { // loop through 4 directions\
-        / it's like n queens from montazeri but NOT. 
+    for(int i = 0; i < 4; i++) { // loop through 4 directions
+        // it's like n queens from montazeri but NOT. 
         // we can think of this like a smaller 4 x 4 chess board grid minus the positional requirements
         int nextRow = r + dr[i]; // row pos + direction change (left and right)
         int nextCol = c + dc[i]; // col pos + direction change (up and down)
