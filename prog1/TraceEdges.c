@@ -125,8 +125,8 @@ int main(int argc, char* argv[]) {
     int endPointSecondRow = -1; // end point (first should be the one starting)
     int endPointSecondCol = -1; // same thing but for column
 
-    for(int i = 0; i < rows; i++) { // there is a problem with this; i dont like nested for loops
-        for(int j = 0; j < cols; j++) { // it works but isnt efficient; there's probably a better way that avoids iterating through each pixel again
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < cols; j++) {
             if(grid[i][j] == 1 && countNeighbors(i, j) == 1) { // if we find an edge pixel, we can start our path from there
                if(endPointFirstRow == -1) { // if we haven't found the first endpoint yet, set it to the current pixel
                    endPointFirstRow = i; // set the row of the first endpoint to the current row
