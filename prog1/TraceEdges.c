@@ -64,17 +64,22 @@ bool getNext(int r, int c, int* nr, int* nc) {
     // If found:
     //   set (*nr, *nc)
     //   return true
-    for(int i = 0; i < 4; i++) {
-        int nextRow = r + dr[i]; // row pos + direction change
-        int nextCol = c + dc[i]; // col pos + direction change
+    for(int i = 0; i < 4; i++) { // loop through 4 directions\
+        / it's like n queens from montazeri but NOT. 
+        // we can think of this like a smaller 4 x 4 chess board grid minus the positional requirements
+        int nextRow = r + dr[i]; // row pos + direction change (left and right)
+        int nextCol = c + dc[i]; // col pos + direction change (up and down)
+        // once we get the positional change we check if its valid
+        // if it is we set the next position to current position and return true
+        // that way we can shift to the next valid pixel until we get to the end of the path
         if(inBounds(nextRow, nextCol) && grid[nextRow][nextCol] == 1 && !visited[nextRow][nextCol]) { // if pixel in bounds is edge and has not ever been visited before
-            *nr = nextRow;
-            *nc = nextCol;
+            *nr = nextRow; // pointer dereference to set the next row position to the next one we found
+            *nc = nextCol; // same thing here. this is why we're using List ADT in the first place
             return true; // we found a valid next move
             // return true and move to the next pixel position
         }
     }
-    return false;
+    return false; // if we loop through all 4 neighbors and find no valid move, return false
 }
 
 // ------------------------------------------------------------
@@ -115,34 +120,36 @@ int main(int argc, char* argv[]) {
     //
     // put your code here
     // variables available to use: grid, visited, rows, cols, dr, dc
-    int endPointFirstRow = -1;
-    int endPointFirstCol = -1;
-    int endPointSecondRow = -1;
-    int endPointSecondCol = -1;
+    int endPointFirstRow = -1; // initialize at index before head (determine index and direction of endpt 1)
+    int endPointFirstCol = -1; // same thing (determine index and direction of endpt 1)
+    int endPointSecondRow = -1; // end point (first should be the one starting)
+    int endPointSecondCol = -1; // same thing but for column
 
     for(int i = 0; i < rows; i++) { // there is a problem with this; i dont like nested for loops
-        for(int j = 0; j < cols; j++) {
+        for(int j = 0; j < cols; j++) { // it works but isnt efficient; there's probably a better way that avoids iterating through each pixel again
             if(grid[i][j] == 1 && countNeighbors(i, j) == 1) { // if we find an edge pixel, we can start our path from there
                if(endPointFirstRow == -1) { // if we haven't found the first endpoint yet, set it to the current pixel
-                   endPointFirstRow = i;
-                   endPointFirstCol = j;
+                   endPointFirstRow = i; // set the row of the first endpoint to the current row
+                   endPointFirstCol = j; // set the column of the first endpoint to the current column
                } else { // otherwise, we found the second endpoint, so set it to the current pixel and break out of the loop
-                   endPointSecondRow = i;
-                   endPointSecondCol = j;
+                   endPointSecondRow = i; // set the row of the second endpoint to the current row
+                   endPointSecondCol = j; // set the column of the second endpoint to the current column
                }
             }
         }
     }
 
-    int startRow;
-    int startCol;
+    int startRow; // variable to hold the starting row of the path
+    int startCol; // variable to hold the starting column of the path
 
-    if(endPointFirstRow < endPointSecondRow || (endPointFirstRow == endPointSecondRow && endPointFirstCol < endPointSecondCol)) { // if the first endpoint is above or to the left of the second endpoint, we can start from the first endpoint
-        startRow = endPointFirstRow;
-        startCol = endPointFirstCol;
+    if(endPointFirstRow < endPointSecondRow || (endPointFirstRow == endPointSecondRow && endPointFirstCol < endPointSecondCol)) { 
+        // if the first endpoint is above or to the left of the second endpoint, we can start from the first endpoint
+        // idea is that our path would start from the top left to the right in a lot of cases (we index zero to four on the grid, left to right top to bottom)
+        startRow = endPointFirstRow; // set the starting row to the first endpoint row
+        startCol = endPointFirstCol; // set the starting column to the first endpoint column
     } else { // otherwise, we start from the second endpoint
-        startRow = endPointSecondRow;
-        startCol = endPointSecondCol;
+        startRow = endPointSecondRow; // set the starting row to the second endpoint row
+        startCol = endPointSecondCol; // set the starting column to the second endpoint column
     }
 
     List path = newList();
@@ -156,13 +163,18 @@ int main(int argc, char* argv[]) {
     //
     // put your code here
     int id = startRow * cols + startCol; // calculate the id of the starting pixel (row * number of columns + column)
+    // it's almost like we're making a hash for a hash table to store the pixel positions in the list.
+    // the id can be reversed and used to calculate the previous valid positions from endpoint 1 to endpoint 2
     append(path, id); // add the starting pixel id to the path list
     visited[startRow][startCol] = true; // mark the starting pixel as visited
 
-    int currentRow = startRow;
-    int currentCol = startCol;
-    int nextRow;
-    int nextCol;
+    int currentRow = startRow; // initialize current row to the starting row
+    int currentCol = startCol; // initialize current column to the starting column
+    // passing these through is like setting up the traversal of a linked list
+    // current position shift to next position is like moving the cursor pointing to next node
+    // same concept applies here
+    int nextRow; // variable to hold the next row position 
+    int nextCol; // variable to hold the next column position
 
     while(getNext(currentRow, currentCol, &nextRow, &nextCol)) { // while we can find a next valid move
         id = nextRow * cols + nextCol; // calculate the id of the next pixel (row * number of columns + column)
@@ -182,9 +194,9 @@ int main(int argc, char* argv[]) {
     }
 
     // Cleanup
-    freeList(&path);
-    fclose(in);
-    fclose(out);
+    freeList(&path); // don't forget to do this!
+    fclose(in); // close input file
+    fclose(out); // close output file
 
     return 0;
 }
