@@ -89,6 +89,9 @@ static void swap(void **a, void **b) {
  */
 static void resize_if_needed(PriorityQueue *pq) {
     // TODO: if pq->size == pq->capacity, double the capacity using realloc()
+    if(pq->size == pq->capacity) {
+        
+    }
 }
 
 /*
@@ -103,6 +106,7 @@ static void heapify_up(PriorityQueue *pq, int idx) {
     // TODO:
     // While idx is not the root and data[idx] has higher priority than parent,
     // swap them and continue moving upward.
+
 }
 
 /*
@@ -120,6 +124,7 @@ static void heapify_down(PriorityQueue *pq, int idx) {
     // 2. determine which child has higher priority
     // 3. if a child should come before the current node, swap and continue
     // 4. otherwise stop
+
 }
 
 /* ==================== Public ADT Functions ==================== */
@@ -130,6 +135,10 @@ void pq_init(PriorityQueue *pq, Comparator cmp) {
     // 2. set capacity to INITIAL_CAPACITY
     // 3. store cmp
     // 4. allocate pq->data using malloc
+    pq->size = 0; // set size to 0 (step 1)
+    pq->capacity = INITIAL_CAPACITY;
+    pq->cmp = cmp;
+    pq->data = malloc(sizeof(int));
 }
 
 void pq_insert(PriorityQueue *pq, void *item) {
@@ -138,6 +147,7 @@ void pq_insert(PriorityQueue *pq, void *item) {
     // 2. place new item at index size
     // 3. increment size
     // 4. restore heap property with heapify_up
+
 }
 
 void *pq_delete(PriorityQueue *pq) {
@@ -150,13 +160,20 @@ void *pq_delete(PriorityQueue *pq) {
     // 3. decrement size
     // 4. restore heap property with heapify_down (if needed)
     // 5. return removed root item
+    if(*pq == NULL) {
+        return NULL;
+    } else {
 
-    return NULL;
+    }
 }
 
 int pq_is_empty(PriorityQueue *pq) {
     // TODO: return 1 if size == 0, else return 0
-    return 1;
+    if(pq->size == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 void print_queue(PriorityQueue *pq) {
@@ -171,6 +188,7 @@ void print_queue(PriorityQueue *pq) {
      *   []
      */
     // TODO
+
 }
 
 void pq_destroy(PriorityQueue *pq) {
@@ -180,4 +198,9 @@ void pq_destroy(PriorityQueue *pq) {
     // 3. set size to 0
     // 4. set capacity to 0
     // 5. set cmp to NULL
+    free(pq);
+    pq->data = NULL;
+    pq->size = 0;
+    pq->capacity = 0;
+    pq->cmp = NULL;
 }
