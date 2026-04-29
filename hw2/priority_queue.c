@@ -33,7 +33,8 @@
  */
 static int parent(int i) {
     // TODO: return the parent index of i
-    return 0;
+    // parent of index i = (i-1) / 2
+    return (i - 1) / 2;
 }
 
 /*
@@ -43,7 +44,8 @@ static int parent(int i) {
  */
 static int left(int i) {
     // TODO: return the left child index of i
-    return 0;
+    // left child of index i = (2*i)+1
+    return (2 * i) + 1;
 }
 
 /*
@@ -53,7 +55,8 @@ static int left(int i) {
  */
 static int right(int i) {
     // TODO: return the right child index of i
-    return 0;
+    // right child of index i = (2*i)+2
+    return (2 * i) + 2;
 }
 
 /*
@@ -63,6 +66,12 @@ static int right(int i) {
  */
 static void swap(void **a, void **b) {
     // TODO: swap the pointer values stored at a and b
+    // we make a temp variable to hold values when we swap
+    void *temp = *a; // temp holds value of A (void pointer)
+    *a = *b; // B now holds the value of A
+    *b = temp; // B now holds the value of temp which was A
+    // and that should be done!
+    *temp = NULL; // set to null at the end for dangling pointer when done
 }
 
 /*
