@@ -71,7 +71,7 @@ static void swap(void **a, void **b) {
     *a = *b; // B now holds the value of A
     *b = temp; // B now holds the value of temp which was A
     // and that should be done!
-    *temp = NULL; // set to null at the end for dangling pointer when done
+    temp = NULL; // set to null at the end for dangling pointer when done
 }
 
 /*
@@ -89,8 +89,10 @@ static void swap(void **a, void **b) {
  */
 static void resize_if_needed(PriorityQueue *pq) {
     // TODO: if pq->size == pq->capacity, double the capacity using realloc()
+    int new_size = 2;
     if(pq->size == pq->capacity) {
-        
+        int *temp = realloc(pq, new_size * sizeof(int));
+        // temp stores the value of pq times 2 (the new size) and the size of the allocated array at the time  
     }
 }
 
@@ -106,7 +108,7 @@ static void heapify_up(PriorityQueue *pq, int idx) {
     // TODO:
     // While idx is not the root and data[idx] has higher priority than parent,
     // swap them and continue moving upward.
-    while(idx != 0 && data[idx] > )
+    
 }
 
 /*
