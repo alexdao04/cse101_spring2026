@@ -106,7 +106,7 @@ static void heapify_up(PriorityQueue *pq, int idx) {
     // TODO:
     // While idx is not the root and data[idx] has higher priority than parent,
     // swap them and continue moving upward.
-
+    while(idx != 0 && data[idx] > )
 }
 
 /*
@@ -160,7 +160,7 @@ void *pq_delete(PriorityQueue *pq) {
     // 3. decrement size
     // 4. restore heap property with heapify_down (if needed)
     // 5. return removed root item
-    if(*pq == NULL) {
+    if(pq == NULL) {
         return NULL;
     } else {
 
