@@ -89,9 +89,9 @@ static void swap(void **a, void **b) {
  */
 static void resize_if_needed(PriorityQueue *pq) {
     // TODO: if pq->size == pq->capacity, double the capacity using realloc()
-    int new_size = 2;
+    pq->capacity *= 2; // double capacity
     if(pq->size == pq->capacity) {
-        pq->data = realloc(pq->data, new_size * sizeof(void*)); // use a temp variable to hold the new array
+        pq->data = realloc(pq->data, pq->capacity * sizeof(void*)); // use a temp variable to hold the new array
         // we use a double pointer to point to the void pointer a layer below since the array is storing those 
         // (we have no values in the queue yet)
 
@@ -111,7 +111,8 @@ static void heapify_up(PriorityQueue *pq, int idx) {
     // While idx is not the root and data[idx] has higher priority than parent,
     // swap them and continue moving upward.
     // start with an empty base case
-    if(pq->data[idx] < pq->data[parent(idx)]) {
+    if(pq->cmp(pq->data[idx], pq->data[parent(idx)]) < 0) { // use comparator to compare node to whats above it
+        // earlier we were comparing the values manually but we're supposed to use cmp instead
         swap(&pq->data[idx], &pq->data[parent(idx)]); // swap the node below with the parent node above depending on its priority
         // we're starting at the bottom so each node will only have one parent node above it
         // thats why in heapify down we compare the left and right children, but in heapify up we just compare the current node to its parent above it
@@ -138,9 +139,9 @@ static void heapify_down(PriorityQueue *pq, int idx) {
     // 2. determine which child has higher priority
     // 3. if a child should come before the current node, swap and continue
     // 4. otherwise stop
-    if(pq->data[left(idx)] < pq->data[right(idx)]) { // compare left to right off the jump
-        if(pq->data[left(idx)] < pq->data[idx]) { // compare left to current node above children
-            swap(&pq->data[left(idx)], &pq->data[idx]);
+    if(pq->cmp(pq->data[left(idx)], pq->data[right(idx)]) < 0) { // compare left to right off the jump
+        if(pq->cmp(pq->data[left(idx)], pq->data[idx]) < 0) { // compare left to current node above children
+            swap(&pq->data[left(idx)], &pq->data[idx]); // swap the left child with current node if left priority > current node
             heapify_down(pq, left(idx)); // call function again similar to what we did in heapify up
             // only difference is we're moving DOWN not up
         } else {
