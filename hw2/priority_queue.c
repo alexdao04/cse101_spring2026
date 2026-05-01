@@ -91,8 +91,9 @@ static void resize_if_needed(PriorityQueue *pq) {
     // TODO: if pq->size == pq->capacity, double the capacity using realloc()
     int new_size = 2;
     if(pq->size == pq->capacity) {
-        int *temp = realloc(pq, new_size * sizeof(int));
-        // temp stores the value of pq times 2 (the new size) and the size of the allocated array at the time  
+        void **temp = realloc(pq->data, new_size * sizeof(void*)); // use a temp variable to hold the new array
+        // we use a double pointer to point to the void pointer a layer below since the array is storing those 
+        // (we have no values in the queue yet)
     }
 }
 
@@ -138,9 +139,9 @@ void pq_init(PriorityQueue *pq, Comparator cmp) {
     // 3. store cmp
     // 4. allocate pq->data using malloc
     pq->size = 0; // set size to 0 (step 1)
-    pq->capacity = INITIAL_CAPACITY;
-    pq->cmp = cmp;
-    pq->data = malloc(sizeof(int));
+    pq->capacity = INITIAL_CAPACITY; // set capacity to initial capacity (step 2)
+    pq->cmp = cmp; // store pq contents in cmp variable
+    pq->data = malloc(INITIAL_CAPACITY * sizeof(void*)); // void pointer array of size times initial capacity
 }
 
 void pq_insert(PriorityQueue *pq, void *item) {
@@ -164,8 +165,8 @@ void *pq_delete(PriorityQueue *pq) {
     // 5. return removed root item
     if(pq == NULL) {
         return NULL;
-    } else {
-
+    } else { // we gotta move the last item to the root
+        void *temp = pq->data[0]; // 
     }
 }
 
@@ -190,7 +191,16 @@ void print_queue(PriorityQueue *pq) {
      *   []
      */
     // TODO
-
+    if(pq->size == 0) { // if the size is 0 we print empty brackets
+        printf("[]\n");
+    } else if(pq->size != 0) { // if the size is not 0 we print the items in the queue plus brackets
+        printf("["); // starting bracket to start the line (no line break yet!)
+        for(int i = 0; i < pq->size; i++) {
+            // set up bounds between 0 and size - 1
+            continue; // lets come back to this later ajdhjfal;hdf;lajsdf;lkajalekrdjflksj
+        }
+        printf("]\n"); // closing bracket line break and done
+    }
 }
 
 void pq_destroy(PriorityQueue *pq) {
@@ -200,7 +210,7 @@ void pq_destroy(PriorityQueue *pq) {
     // 3. set size to 0
     // 4. set capacity to 0
     // 5. set cmp to NULL
-    free(pq);
+    free(pq->data);
     pq->data = NULL;
     pq->size = 0;
     pq->capacity = 0;
