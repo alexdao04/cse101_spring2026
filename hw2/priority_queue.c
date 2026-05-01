@@ -91,7 +91,7 @@ static void resize_if_needed(PriorityQueue *pq) {
     // TODO: if pq->size == pq->capacity, double the capacity using realloc()
     int new_size = 2;
     if(pq->size == pq->capacity) {
-        void **temp = realloc(pq->data, new_size * sizeof(void*)); // use a temp variable to hold the new array
+        pq->data = realloc(pq->data, new_size * sizeof(void*)); // use a temp variable to hold the new array
         // we use a double pointer to point to the void pointer a layer below since the array is storing those 
         // (we have no values in the queue yet)
 
@@ -220,15 +220,14 @@ void print_queue(PriorityQueue *pq) {
     // TODO
     if(pq->size == 0) { // if the size is 0 we print empty brackets
         printf("[]\n");
-    } else if(pq->size != 0) { // if the size is not 0 we print the items in the queue plus brackets
-        printf("["); // starting bracket to start the line (no line break yet!)
+    } else { // if the size is not 0 we print the items in the queue plus brackets
+        printf("[ ");
         for(int i = 0; i < pq->size; i++) {
-            // set up bounds between 0 and size - 1
-            // we have to figure out a way to cast void to int and then dereference to get the integer value to print properly
-            // how do i do that?????
-            continue
+            void *item = pq->data[i];
+            int *int_item = (int*) item; // void pointer to int pointer conversion
+            printf("%d ", *int_item);
         }
-        printf("]\n"); // closing bracket line break and done
+        printf("]\n");
     }
 }
 
