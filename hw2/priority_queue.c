@@ -135,12 +135,19 @@ static void heapify_down(PriorityQueue *pq, int idx) {
     // 2. determine which child has higher priority
     // 3. if a child should come before the current node, swap and continue
     // 4. otherwise stop
-    if(pq->cmp(pq->data[left(idx)], pq->data[right(idx)]) < 0) { // compare left to right off the jump
-        if(pq->cmp(pq->data[left(idx)], pq->data[idx]) < 0) { // compare left to current node above children
-            swap(&pq->data[left(idx)], &pq->data[idx]); // swap the left child with current node if left priority > current node
-            heapify_down(pq, left(idx)); // call function again similar to what we did in heapify up
-            // only difference is we're moving DOWN not up
-        }
+    int node_to_swap = idx;
+    int left_child_node = left(idx);
+    int right_child_node = right(idx);
+
+    if(left_child_node < pq->size && pq->cmp(pq->data[left_child_node], pq->data[node_to_swap]) < 0) { // check if left child index is in bounds and if left child has higher priority than the current node
+        node_to_swap = left_child_node; // left child has higher priority than the current node
+    }
+    if(right_child_node < pq->size && pq->cmp(pq->data[right_child_node], pq->data[node_to_swap]) < 0) { // check if right child index is in bounds and if right child has higher priority than the current node (or left child if it was swapped)
+        node_to_swap = right_child_node; // right child has higher priority than the current node
+    }
+    if(node_to_swap != idx) { // if node to swap not the current node at the moment
+        swap(&pq->data[idx], &pq->data[node_to_swap]); // swap the current node with its child node that has higher priority
+        heapify_down(pq, node_to_swap); // call function again with child node index and continue down the tree
     }
 }
 
