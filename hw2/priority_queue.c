@@ -221,7 +221,7 @@ void print_queue(PriorityQueue *pq) {
     if(pq->size == 0) { // if the size is 0 we print empty brackets
         printf("[]\n");
     } else { // if the size is not 0 we print the items in the queue plus brackets
-        printf("[ ");
+        printf("[");
         for(int i = 0; i < pq->size; i++) {
             void *item = pq->data[i];
             int *int_item = (int*) item; // void pointer to int pointer conversion
