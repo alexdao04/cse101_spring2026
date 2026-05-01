@@ -89,8 +89,8 @@ static void swap(void **a, void **b) {
  */
 static void resize_if_needed(PriorityQueue *pq) {
     // TODO: if pq->size == pq->capacity, double the capacity using realloc()
-    pq->capacity *= 2; // double capacity
     if(pq->size == pq->capacity) {
+        pq->capacity *= 2; // double capacity
         pq->data = realloc(pq->data, pq->capacity * sizeof(void*)); // use a temp variable to hold the new array
         // we use a double pointer to point to the void pointer a layer below since the array is storing those 
         // (we have no values in the queue yet)
@@ -117,10 +117,6 @@ static void heapify_up(PriorityQueue *pq, int idx) {
         // we're starting at the bottom so each node will only have one parent node above it
         // thats why in heapify down we compare the left and right children, but in heapify up we just compare the current node to its parent above it
         heapify_up(pq, parent(idx)); // call the function again with the parent index and the node next up the tree
-    } else {
-        return; // this is self explanatory
-        // we stop when the node is the root or when parent priority > node 
-        // (meaning the node should be in the right place and the root at highest priority)
     }
 }
 
@@ -144,8 +140,6 @@ static void heapify_down(PriorityQueue *pq, int idx) {
             swap(&pq->data[left(idx)], &pq->data[idx]); // swap the left child with current node if left priority > current node
             heapify_down(pq, left(idx)); // call function again similar to what we did in heapify up
             // only difference is we're moving DOWN not up
-        } else {
-            return; // exit condition similar to heapify up
         }
     }
 }
@@ -226,7 +220,10 @@ void print_queue(PriorityQueue *pq) {
         for(int i = 0; i < pq->size; i++) {
             void *item = pq->data[i];
             int *int_item = (int*) item; // void pointer to int pointer conversion
-            printf("%d ", *int_item);
+            printf("%d", *int_item);
+            if(i < pq->size - 1) { // takes care of spacing between items for formatting
+                printf(" ");
+            }
         }
         printf("]\n");
     }
