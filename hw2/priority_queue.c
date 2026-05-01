@@ -94,6 +94,7 @@ static void resize_if_needed(PriorityQueue *pq) {
         void **temp = realloc(pq->data, new_size * sizeof(void*)); // use a temp variable to hold the new array
         // we use a double pointer to point to the void pointer a layer below since the array is storing those 
         // (we have no values in the queue yet)
+
     }
 }
 
@@ -109,7 +110,17 @@ static void heapify_up(PriorityQueue *pq, int idx) {
     // TODO:
     // While idx is not the root and data[idx] has higher priority than parent,
     // swap them and continue moving upward.
-    
+    // start with an empty base case
+    if(pq->data[idx] < pq->data[parent(idx)]) {
+        swap(&pq->data[idx], &pq->data[parent(idx)]); // swap the node below with the parent node above depending on its priority
+        // we're starting at the bottom so each node will only have one parent node above it
+        // thats why in heapify down we compare the left and right children, but in heapify up we just compare the current node to its parent above it
+        heapify_up(pq, parent(idx)); // call the function again with the parent index and the node next up the tree
+    } else {
+        return; // this is self explanatory
+        // we stop when the node is the root or when parent priority > node 
+        // (meaning the node should be in the right place and the root at highest priority)
+    }
 }
 
 /*
@@ -127,7 +138,15 @@ static void heapify_down(PriorityQueue *pq, int idx) {
     // 2. determine which child has higher priority
     // 3. if a child should come before the current node, swap and continue
     // 4. otherwise stop
-
+    if(pq->data[left(idx)] < pq->data[right(idx)]) { // compare left to right off the jump
+        if(pq->data[left(idx)] < pq->data[idx]) { // compare left to current node above children
+            swap(&pq->data[left(idx)], &pq->data[idx]);
+            heapify_down(pq, left(idx)); // call function again similar to what we did in heapify up
+            // only difference is we're moving DOWN not up
+        } else {
+            return; // exit condition similar to heapify up
+        }
+    }
 }
 
 /* ==================== Public ADT Functions ==================== */
@@ -150,7 +169,11 @@ void pq_insert(PriorityQueue *pq, void *item) {
     // 2. place new item at index size
     // 3. increment size
     // 4. restore heap property with heapify_up
-
+    resize_if_needed(pq);
+    pq->data[pq->size] = item; // data inside the queue at pq's index size = new item
+    pq->size++; // increment size when we add an item to the queue
+    heapify_up(pq, pq->size - 1); // set bounds for heapify up between 0 and size - 1 
+    // (we added an item to the end of the queue, size would be out of bounds/NULL whereas size - 1 is the last element)
 }
 
 void *pq_delete(PriorityQueue *pq) {
@@ -163,10 +186,14 @@ void *pq_delete(PriorityQueue *pq) {
     // 3. decrement size
     // 4. restore heap property with heapify_down (if needed)
     // 5. return removed root item
-    if(pq == NULL) {
+    if(pq->size == 0) { // if the queue is empty, return NULL (base case)
         return NULL;
-    } else { // we gotta move the last item to the root
-        void *temp = pq->data[0]; // 
+    } else { // we gotta move the last item to the root, decrement size, and then heapify down to restore the heap after deleting
+        void *temp = pq->data[0]; // save the root item in a temp variable for the moment
+        pq->data[0] = pq->data[pq->size - 1]; // last item to root (pq -> size - 1, refer to heapify functions)
+        pq->size--; // decrement size
+        heapify_down(pq, 0); // restore heap property with heapify down from root 0
+        return temp; // return the temp variable which was the originally removed root item
     }
 }
 
@@ -197,7 +224,9 @@ void print_queue(PriorityQueue *pq) {
         printf("["); // starting bracket to start the line (no line break yet!)
         for(int i = 0; i < pq->size; i++) {
             // set up bounds between 0 and size - 1
-            continue; // lets come back to this later ajdhjfal;hdf;lajsdf;lkajalekrdjflksj
+            // we have to figure out a way to cast void to int and then dereference to get the integer value to print properly
+            // how do i do that?????
+            continue
         }
         printf("]\n"); // closing bracket line break and done
     }
