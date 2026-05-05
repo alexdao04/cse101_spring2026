@@ -33,7 +33,8 @@
  */
 static int parent(int i) {
     // TODO: return the parent index of i
-    return 0;
+    // parent of index i = (i-1) / 2
+    return (i - 1) / 2;
 }
 
 /*
@@ -43,7 +44,8 @@ static int parent(int i) {
  */
 static int left(int i) {
     // TODO: return the left child index of i
-    return 0;
+    // left child of index i = (2*i)+1
+    return (2 * i) + 1;
 }
 
 /*
@@ -53,7 +55,8 @@ static int left(int i) {
  */
 static int right(int i) {
     // TODO: return the right child index of i
-    return 0;
+    // right child of index i = (2*i)+2
+    return (2 * i) + 2;
 }
 
 /*
@@ -63,6 +66,12 @@ static int right(int i) {
  */
 static void swap(void **a, void **b) {
     // TODO: swap the pointer values stored at a and b
+    // we make a temp variable to hold values when we swap
+    void *temp = *a; // temp holds value of A (void pointer)
+    *a = *b; // B now holds the value of A
+    *b = temp; // B now holds the value of temp which was A
+    // and that should be done!
+    temp = NULL; // set to null at the end for dangling pointer when done
 }
 
 /*
@@ -80,6 +89,13 @@ static void swap(void **a, void **b) {
  */
 static void resize_if_needed(PriorityQueue *pq) {
     // TODO: if pq->size == pq->capacity, double the capacity using realloc()
+    if(pq->size == pq->capacity) {
+        pq->capacity *= 2; // double capacity
+        pq->data = realloc(pq->data, pq->capacity * sizeof(void*)); // use a temp variable to hold the new array
+        // we use a double pointer to point to the void pointer a layer below since the array is storing those 
+        // (we have no values in the queue yet)
+
+    }
 }
 
 /*
@@ -94,6 +110,14 @@ static void heapify_up(PriorityQueue *pq, int idx) {
     // TODO:
     // While idx is not the root and data[idx] has higher priority than parent,
     // swap them and continue moving upward.
+    // start with an empty base case
+    if(pq->cmp(pq->data[idx], pq->data[parent(idx)]) < 0) { // use comparator to compare node to whats above it
+        // earlier we were comparing the values manually but we're supposed to use cmp instead
+        swap(&pq->data[idx], &pq->data[parent(idx)]); // swap the node below with the parent node above depending on its priority
+        // we're starting at the bottom so each node will only have one parent node above it
+        // thats why in heapify down we compare the left and right children, but in heapify up we just compare the current node to its parent above it
+        heapify_up(pq, parent(idx)); // call the function again with the parent index and the node next up the tree
+    }
 }
 
 /*
@@ -111,6 +135,20 @@ static void heapify_down(PriorityQueue *pq, int idx) {
     // 2. determine which child has higher priority
     // 3. if a child should come before the current node, swap and continue
     // 4. otherwise stop
+    int node_to_swap = idx;
+    int left_child_node = left(idx);
+    int right_child_node = right(idx);
+
+    if(left_child_node < pq->size && pq->cmp(pq->data[left_child_node], pq->data[node_to_swap]) < 0) { // check if left child index is in bounds and if left child has higher priority than the current node
+        node_to_swap = left_child_node; // left child has higher priority than the current node
+    }
+    if(right_child_node < pq->size && pq->cmp(pq->data[right_child_node], pq->data[node_to_swap]) < 0) { // check if right child index is in bounds and if right child has higher priority than the current node (or left child if it was swapped)
+        node_to_swap = right_child_node; // right child has higher priority than the current node
+    }
+    if(node_to_swap != idx) { // if node to swap not the current node at the moment
+        swap(&pq->data[idx], &pq->data[node_to_swap]); // swap the current node with its child node that has higher priority
+        heapify_down(pq, node_to_swap); // call function again with child node index and continue down the tree
+    }
 }
 
 /* ==================== Public ADT Functions ==================== */
@@ -121,6 +159,10 @@ void pq_init(PriorityQueue *pq, Comparator cmp) {
     // 2. set capacity to INITIAL_CAPACITY
     // 3. store cmp
     // 4. allocate pq->data using malloc
+    pq->size = 0; // set size to 0 (step 1)
+    pq->capacity = INITIAL_CAPACITY; // set capacity to initial capacity (step 2)
+    pq->cmp = cmp; // store pq contents in cmp variable
+    pq->data = malloc(INITIAL_CAPACITY * sizeof(void*)); // void pointer array of size times initial capacity
 }
 
 void pq_insert(PriorityQueue *pq, void *item) {
@@ -129,6 +171,11 @@ void pq_insert(PriorityQueue *pq, void *item) {
     // 2. place new item at index size
     // 3. increment size
     // 4. restore heap property with heapify_up
+    resize_if_needed(pq);
+    pq->data[pq->size] = item; // data inside the queue at pq's index size = new item
+    pq->size++; // increment size when we add an item to the queue
+    heapify_up(pq, pq->size - 1); // set bounds for heapify up between 0 and size - 1 
+    // (we added an item to the end of the queue, size would be out of bounds/NULL whereas size - 1 is the last element)
 }
 
 void *pq_delete(PriorityQueue *pq) {
@@ -141,13 +188,24 @@ void *pq_delete(PriorityQueue *pq) {
     // 3. decrement size
     // 4. restore heap property with heapify_down (if needed)
     // 5. return removed root item
-
-    return NULL;
+    if(pq->size == 0) { // if the queue is empty, return NULL (base case)
+        return NULL;
+    } else { // we gotta move the last item to the root, decrement size, and then heapify down to restore the heap after deleting
+        void *temp = pq->data[0]; // save the root item in a temp variable for the moment
+        pq->data[0] = pq->data[pq->size - 1]; // last item to root (pq -> size - 1, refer to heapify functions)
+        pq->size--; // decrement size
+        heapify_down(pq, 0); // restore heap property with heapify down from root 0
+        return temp; // return the temp variable which was the originally removed root item
+    }
 }
 
 int pq_is_empty(PriorityQueue *pq) {
     // TODO: return 1 if size == 0, else return 0
-    return 1;
+    if(pq->size == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 void print_queue(PriorityQueue *pq) {
@@ -162,6 +220,20 @@ void print_queue(PriorityQueue *pq) {
      *   []
      */
     // TODO
+    if(pq->size == 0) { // if the size is 0 we print empty brackets
+        printf("[]\n");
+    } else { // if the size is not 0 we print the items in the queue plus brackets
+        printf("[");
+        for(int i = 0; i < pq->size; i++) {
+            void *item = pq->data[i];
+            int *int_item = (int*) item; // void pointer to int pointer conversion
+            printf("%d", *int_item);
+            if(i < pq->size - 1) { // takes care of spacing between items for formatting
+                printf(" ");
+            }
+        }
+        printf("]\n");
+    }
 }
 
 void pq_destroy(PriorityQueue *pq) {
@@ -171,4 +243,9 @@ void pq_destroy(PriorityQueue *pq) {
     // 3. set size to 0
     // 4. set capacity to 0
     // 5. set cmp to NULL
+    free(pq->data);
+    pq->data = NULL;
+    pq->size = 0;
+    pq->capacity = 0;
+    pq->cmp = NULL;
 }
