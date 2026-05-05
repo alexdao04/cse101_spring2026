@@ -1,0 +1,23 @@
+Snapshot at time 1
+Waiting Queue: [F203]
+Runway0: [F202 F202]
+Runway1: [F201 F201]
+
+Snapshot at time 2
+Waiting Queue: [F204 F203]
+Runway0: [F202 F202 F202]
+Runway1: [F201 F201 F201]
+
+Snapshot at time 3
+Waiting Queue: [F203]
+Runway0: [F202 F202 F202 F202]
+Runway1: [F201 F201 F201 F204]
+
+Snapshot at time 4
+Waiting Queue: []
+Runway0: [F202 F202 F202 F202 F203]
+Runway1: [F201 F201 F201 F204 IDLE]
+
+Final Schedule
+Runway0: [F202 F202 F202 F202 F203]
+Runway1: [F201 F201 F201 F204 IDLE]
