@@ -25,7 +25,10 @@
 static int op_rank(Operation op) {
     // TODO:
     // Return a smaller value for LAND than for TAKEOFF
-    return 0;
+    if (op == LAND) {
+        return 0;
+    }
+    return 1;
 }
 
 /*
@@ -36,6 +39,11 @@ static int op_rank(Operation op) {
 static int is_snapshot_time(int current_time, int snapshot_times[], int snapshot_count) {
     // TODO:
     // Scan the snapshot_times array and return 1 if current_time is present
+    for (int i = 0; i < snapshot_count; i++) {
+        if (snapshot_times[i] == current_time) {
+            return 1;
+        }
+    }
     return 0;
 }
 
@@ -47,7 +55,12 @@ static int is_snapshot_time(int current_time, int snapshot_times[], int snapshot
 static int all_flights_arrived(Flight flights[], int n, int current_time) {
     // TODO:
     // Return 1 only if every flight has already arrived by current_time
-    return 0;
+    for (int i = 0; i < n; i++) {
+        if (flights[i].request_time > current_time) {
+            return 0;
+        }
+    }
+    return 1;
 }
 
 /*
@@ -67,6 +80,11 @@ static int all_flights_arrived(Flight flights[], int n, int current_time) {
 static void label_entry(char *dest, Flight *flight) {
     // TODO:
     // Use snprintf() to write either "IDLE" or "F<id>" into dest
+    if (flight == NULL) {
+        snprintf(dest, ENTRY_LEN, "IDLE");
+    } else {
+        snprintf(dest, ENTRY_LEN, "F%d", flight->flight_id);
+    }
 }
 
 /* ==================== Required Functions ==================== */
@@ -86,7 +104,22 @@ int flight_comparator(void *A, void *B) {
      *   = 0 if they are equal
      *   > 0 if B should come before A
      */
-    return 0;
+    Flight *f1 = (Flight *)A;
+    Flight *f2 = (Flight *)B;
+
+    if (f1->priority != f2->priority) {
+        return f1->priority - f2->priority;
+    }
+
+    if (op_rank(f1->operation) != op_rank(f2->operation)) {
+        return op_rank(f1->operation) - op_rank(f2->operation);
+    }
+
+    if (f1->request_time != f2->request_time) {
+        return f1->request_time - f2->request_time;
+    }
+
+    return f1->flight_id - f2->flight_id;
 }
 
 void print_waiting_queue(PriorityQueue *pq) {
@@ -106,6 +139,19 @@ void print_waiting_queue(PriorityQueue *pq) {
      * - No trailing spaces inside brackets
      */
     // TODO
+    printf("Waiting Queue: [");
+
+    for (int i = 0; i < pq->size; i++) {
+        Flight *f = (Flight *)pq->data[i];
+
+        printf("F%d", f->flight_id);
+
+        if (i < pq->size - 1) {
+            printf(" ");
+        }
+    }
+
+    printf("]\n");
 }
 
 void print_runway_chart(const char *label, char chart[][ENTRY_LEN], int length) {
@@ -119,6 +165,17 @@ void print_runway_chart(const char *label, char chart[][ENTRY_LEN], int length) 
      * - If length == 0, print empty brackets
      */
     // TODO
+    printf("%s: [", label);
+
+    for (int i = 0; i < length; i++) {
+        printf("%s", chart[i]);
+
+        if (i < length - 1) {
+            printf(" ");
+        }
+    }
+
+    printf("]\n");
 }
 
 void simulate_runway_scheduling(Flight flights[], int n,
@@ -189,4 +246,71 @@ void simulate_runway_scheduling(Flight flights[], int n,
     // 3. print snapshots at requested times
     // 4. print final schedule
     // 5. destroy pq before returning
+    /* simulate_runway_scheduling() */
+
+    for (int i = 0; i < n; i++) {
+        flights[i].remaining_time = flights[i].duration;
+    }
+
+    pq_init(&pq, flight_comparator);
+
+    while (!(all_flights_arrived(flights, n, current_time) &&
+            pq_is_empty(&pq) &&
+            runway0 == NULL &&
+            runway1 == NULL)) {
+
+        for (int i = 0; i < n; i++) {
+            if (flights[i].request_time == current_time) {
+                pq_insert(&pq, &flights[i]);
+            }
+        }
+
+        if (runway0 == NULL && !pq_is_empty(&pq)) {
+            runway0 = (Flight *)pq_delete(&pq);
+        }
+
+        if (runway1 == NULL && !pq_is_empty(&pq)) {
+            runway1 = (Flight *)pq_delete(&pq);
+        }
+
+        label_entry(runway0_chart[current_time], runway0);
+        label_entry(runway1_chart[current_time], runway1);
+
+        if (runway0 != NULL) {
+            runway0->remaining_time--;
+        }
+
+        if (runway1 != NULL) {
+            runway1->remaining_time--;
+        }
+
+        if (runway0 != NULL && runway0->remaining_time == 0) {
+            runway0 = NULL;
+        }
+
+        if (runway1 != NULL && runway1->remaining_time == 0) {
+            runway1 = NULL;
+        }
+
+        if (is_snapshot_time(current_time, snapshot_times, snapshot_count)) {
+            printf("Snapshot at time %d\n", current_time);
+
+            print_waiting_queue(&pq);
+
+            print_runway_chart("Runway0", runway0_chart, current_time + 1);
+
+            print_runway_chart("Runway1", runway1_chart, current_time + 1);
+        }
+
+        current_time++;
+    }
+
+    printf("Final Schedule\n");
+
+    print_runway_chart("Runway0", runway0_chart, current_time);
+
+    print_runway_chart("Runway1", runway1_chart, current_time);
+
+    pq_destroy(&pq);
+
 }
