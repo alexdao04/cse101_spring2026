@@ -294,12 +294,13 @@ void simulate_runway_scheduling(Flight flights[], int n,
 
         if (is_snapshot_time(current_time, snapshot_times, snapshot_count)) {
             printf("Snapshot at time %d\n", current_time);
-
             print_waiting_queue(&pq);
-
-            print_runway_chart("Runway0", runway0_chart, current_time + 1);
-
-            print_runway_chart("Runway1", runway1_chart, current_time + 1);
+            print_runway_chart("Runway0",
+                            runway0_chart,
+                            current_time + 1);
+            print_runway_chart("Runway1",
+                            runway1_chart,
+                            current_time + 1);
         }
 
         current_time++;
