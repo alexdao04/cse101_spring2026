@@ -70,15 +70,13 @@ int flight_comparator(void *A, void *B);
  *
  * Simulates runway usage over discrete time steps starting at time 0.
  *
- * At each time step, perform the following steps in order:
- * 1. Insert all flights whose request_time == current_time into the priority queue.
- * 2. If RUNWAY0 is free, assign it the highest-priority waiting flight.
- * 3. If RUNWAY1 is free, assign it the next highest-priority waiting flight.
- * 4. Record the runway activity for the current time step.
- * 5. Decrement remaining_time for all active flights.
- * 6. If a flight reaches remaining_time == 0, it finishes at the end of this
- *    time step and its runway becomes free for the next time step.
- * 7. If current_time matches a snapshot time, print the snapshot for this time step.
+ * At each time step:
+ * - insert newly arrived flights into the priority queue
+ * - assign waiting flights to any free runways
+ * - record runway activity for the current time step
+ * - decrement remaining_time of active flights
+ * - free a runway for the next time step if its current flight has completed
+ * - print a snapshot if the current time matches a snapshot time
  *
  * The simulation ends when:
  * - all flights have arrived
