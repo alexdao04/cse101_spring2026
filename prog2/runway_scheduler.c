@@ -28,7 +28,7 @@ static int op_rank(Operation op) {
     if (op == LAND) {
         return 0;
     }
-    return 1;
+    return 1; // self explanatory six seven
 }
 
 /*
@@ -39,12 +39,12 @@ static int op_rank(Operation op) {
 static int is_snapshot_time(int current_time, int snapshot_times[], int snapshot_count) {
     // TODO:
     // Scan the snapshot_times array and return 1 if current_time is present
-    for (int i = 0; i < snapshot_count; i++) {
-        if (snapshot_times[i] == current_time) {
-            return 1;
+    for (int i = 0; i < snapshot_count; i++) { // for loop
+        if (snapshot_times[i] == current_time) { // if statement logic
+            return 1; // return true
         }
     }
-    return 0;
+    return 0; // return false
 }
 
 /*
@@ -55,12 +55,12 @@ static int is_snapshot_time(int current_time, int snapshot_times[], int snapshot
 static int all_flights_arrived(Flight flights[], int n, int current_time) {
     // TODO:
     // Return 1 only if every flight has already arrived by current_time
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) { // for loop 
         if (flights[i].request_time > current_time) {
-            return 0;
+            return 0; // return true
         }
     }
-    return 1;
+    return 1; // return false
 }
 
 /*
@@ -81,9 +81,9 @@ static void label_entry(char *dest, Flight *flight) {
     // TODO:
     // Use snprintf() to write either "IDLE" or "F<id>" into dest
     if (flight == NULL) {
-        snprintf(dest, ENTRY_LEN, "IDLE");
+        snprintf(dest, ENTRY_LEN, "IDLE"); // dest now holds idle
     } else {
-        snprintf(dest, ENTRY_LEN, "F%d", flight->flight_id);
+        snprintf(dest, ENTRY_LEN, "F%d", flight->flight_id); // dest now holds flight_id
     }
 }
 
@@ -167,7 +167,7 @@ void print_runway_chart(const char *label, char chart[][ENTRY_LEN], int length) 
     // TODO
     printf("%s: [", label);
 
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; i++) { // print values in array formatted
         printf("%s", chart[i]);
 
         if (i < length - 1) {
@@ -252,9 +252,9 @@ void simulate_runway_scheduling(Flight flights[], int n,
         flights[i].remaining_time = flights[i].duration;
     }
 
-    pq_init(&pq, flight_comparator);
+    pq_init(&pq, flight_comparator); 
 
-    while (!(all_flights_arrived(flights, n, current_time) &&
+    while (!(all_flights_arrived(flights, n, current_time) && 
             pq_is_empty(&pq) &&
             runway0 == NULL &&
             runway1 == NULL)) {
