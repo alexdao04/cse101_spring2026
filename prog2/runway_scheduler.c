@@ -301,6 +301,7 @@ void simulate_runway_scheduling(Flight flights[], int n,
             print_runway_chart("Runway1",
                             runway1_chart,
                             current_time + 1);
+            printf("\n");
         }
 
         current_time++;
