@@ -1,0 +1,8 @@
+COUNT 0 hash
+COUNT 1 hash
+SEARCH hash keys
+SEARCH store keys
+REMOVE 0 hash
+COUNT 0 hash
+SEARCH hash keys
+PRINT 0

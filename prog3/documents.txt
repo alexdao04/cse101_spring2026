@@ -1,0 +1,13 @@
+3
+DOC 0
+Hash tables store key value pairs.
+Hash tables use keys.
+END
+DOC 1
+Trees store sorted keys.
+Graphs store nodes and edges.
+END
+DOC 2
+Queues and stacks store data.
+Hash functions map keys to buckets.
+END

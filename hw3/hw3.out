@@ -1,0 +1,35 @@
+Insert apple: true
+Insert banana: true
+Insert grape: true
+Insert melon: true
+Insert pear: true
+Insert apple again: false
+
+Dictionary after inserts:
+pear: 4
+banana: 5
+apple: 3
+grape: 2
+melon: 7
+
+Update grape: true
+Update kiwi: false
+
+Dictionary after updates:
+pear: 4
+banana: 5
+apple: 3
+grape: 9
+melon: 7
+
+Find melon: melon -> 7
+Find kiwi: not found
+
+Delete apple: true
+Delete melon: true
+Delete kiwi: false
+
+Dictionary after deletes:
+pear: 4
+banana: 5
+grape: 9
