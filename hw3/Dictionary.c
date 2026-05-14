@@ -49,11 +49,15 @@ static char *copy_string(const char *s) {
 
     // TODO: Replace this placeholder return value.
     size_t string_length = strlen(s);
+
     char *str_copy = malloc(string_length + 1);
+
     if(str_copy == NULL) {
         return NULL;
     }
+
     strcpy(str_copy, s);
+
     return str_copy;
 }
 
@@ -72,7 +76,25 @@ static Node create_node(const char *key, int value) {
     (void)value;
 
     // TODO: Replace this placeholder return value.
-    return NULL;
+    Node new_node = malloc(sizeof(NodeObj)); // create new node to store KV entry
+
+    if(new_node == NULL) {
+        return NULL;
+    }
+
+    new_node->pair.key = copy_string(key); // copy key value pair into node
+
+    if(new_node->pair.key == NULL) {
+        free(new_node); // dangling pointer = bad, free if copy_string fails
+        return NULL; 
+    }
+
+    new_node->pair.value = value; // store pair values in the node
+
+    new_node->next = NULL; // chaining
+
+    return new_node;
+
 }
 
 /*
@@ -87,6 +109,13 @@ static void destroy_node(Node node) {
     (void)node;
 
     // TODO: Implement this helper.
+    if(node != NULL) {
+
+        free(node->pair.key);
+
+        free(node);
+
+    }
 }
 
 /*
@@ -103,8 +132,25 @@ static Node find_node(Dictionary D, const char *key) {
     (void)key;
 
     // TODO: Replace this placeholder return value.
-    return NULL;
+    if(D == NULL || key == NULL) {
+        return NULL;
+    }
+
+    size_t bucket_index = ht_hash(key, D->num_buckets); // use hash function to get index
+
+    Node current = D->buckets[bucket_index]; // start at head of bucket
+
+    while(current != NULL) {
+
+        if(strcmp(current->pair.key, key) == 0) { // strcmp returns 0 for equal strings
+            return current;
+        }
+
+    current = current->next; // move to next node in chain
+
+    }
 }
+
 
 /*
  * dictionary_create
@@ -117,7 +163,27 @@ Dictionary dictionary_create(size_t num_buckets) {
     // TODO: Allocate and initialize the bucket array.
 
     // TODO: Replace this placeholder return value.
-    return NULL;
+    Dictionary new_dict = malloc(sizeof(struct DictionaryObj));
+    Node *buckets = malloc(num_buckets * sizeof(Node));
+
+    if(new_dict == NULL || buckets == NULL) { // NO DANGLING POINTERS PLEASE
+        free(new_dict);
+        
+        free(buckets);
+
+        return NULL;
+    }
+
+    new_dict -> buckets = buckets; // assign bucket array to dictionary
+
+    new_dict -> num_buckets = num_buckets; // assign number of buckets to dictionary
+
+    new_dict -> size = 0;
+
+    for(size_t i = 0; i < num_buckets; i++) {
+        buckets[i] = NULL; // all buckets in the array start as NULL until otherwise
+
+    }
 }
 
 /*
