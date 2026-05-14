@@ -31,5 +31,6 @@ size_t ht_hash(const char *key, size_t num_buckets) {
     (void)num_buckets;
 
     // TODO: Replace this placeholder return value.
-    return 0;
+    unsigned int hash_code = ht_string2int(key);
+    return hash_code % num_buckets; // convert to index
 }

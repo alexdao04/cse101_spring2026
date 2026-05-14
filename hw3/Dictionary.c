@@ -48,7 +48,13 @@ static char *copy_string(const char *s) {
     (void)s;
 
     // TODO: Replace this placeholder return value.
-    return NULL;
+    size_t string_length = strlen(s);
+    char *str_copy = malloc(string_length + 1);
+    if(str_copy == NULL) {
+        return NULL;
+    }
+    strcpy(str_copy, s);
+    return str_copy;
 }
 
 /*
