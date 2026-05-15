@@ -109,7 +109,6 @@ static void destroy_node(Node node) {
 
     // TODO: Implement this helper.
     if(node != NULL) {
-
         free(node->pair.key);
 
         free(node);
@@ -140,13 +139,13 @@ static Node find_node(Dictionary D, const char *key) {
 
     while(current != NULL) {
 
-        if(strcmp(current->pair.key, key) == 0) { // strcmp returns 0 for equal strings
+        if(current->pair.key != NULL && strcmp(current->pair.key, key) == 0) {
             return current;
         }
-
+    
     current = current->next;
-
     }
+
     return NULL; // if key not found
 }
 
@@ -183,6 +182,7 @@ Dictionary dictionary_create(size_t num_buckets) {
     for(size_t i = 0; i < num_buckets; i++) {
         new_dict->buckets[i] = NULL; 
     }
+
     return new_dict;
 }
 
@@ -233,7 +233,6 @@ bool dictionary_insert(Dictionary D, const char *key, int value) {
     // TODO: Create a new node.
     // TODO: Insert the new node at the end of the correct bucket chain.
     // TODO: Update dictionary size.
-
     // TODO: Replace this placeholder return value.
     if(D == NULL || key == NULL) {
         return false;
@@ -244,29 +243,20 @@ bool dictionary_insert(Dictionary D, const char *key, int value) {
     }
 
     Node new_node = create_node(key, value); // create new node to store KV entry
+    
+    size_t bucket_index = ht_hash(key, D->num_buckets);
 
-    for(size_t i = 0; i < D->num_buckets; i++) {
-
+    for(size_t i = 0; i < bucket_index; i++) {
         if(D->buckets[i] == NULL) {
-            D->buckets[i] = new_node; // insert new node at bucket if empty
+            D->buckets[i] = new_node;
 
-            D->size++; // update size of dictionary
+            D->size++;
 
             return true;
         }
-
-        Node current = D->buckets[i]; // otherwise traverse chain to end and insert
-
-        while(current->next != NULL) {
-            current = current->next; // traversal logic
-        }
-
-        current->next = new_node; // insert new node at the end
     }
 
-    D->size++; // update size of dictionary
-
-    return true; // insert worked!
+    return true;
 }
 
 /*
@@ -290,6 +280,7 @@ bool dictionary_update(Dictionary D, const char *key, int value) {
 
         return true;
     }
+
     return false;
 }
 
