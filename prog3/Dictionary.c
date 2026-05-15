@@ -48,7 +48,17 @@ static char *copy_string(const char *s) {
     (void)s;
 
     // TODO: Replace this placeholder return value.
-    return NULL;
+    size_t string_length = strlen(s);
+
+    char *str_copy = malloc(string_length + 1);
+
+    if(str_copy == NULL) {
+        return NULL;
+    }
+
+    strcpy(str_copy, s);
+
+    return str_copy;
 }
 
 /*
@@ -66,7 +76,24 @@ static Node create_node(const char *key, int value) {
     (void)value;
 
     // TODO: Replace this placeholder return value.
-    return NULL;
+    Node new_node = malloc(sizeof(NodeObj)); // create new node to store KV entry
+
+    if(new_node == NULL) {
+        return NULL;
+    }
+
+    new_node->pair.key = copy_string(key); // copy key value pair into node
+
+    if(new_node->pair.key == NULL) {
+        free(new_node); // dangling pointer = bad, free if copy_string fails
+        return NULL; 
+    }
+
+    new_node->pair.value = value; // store pair values in the node
+
+    new_node->next = NULL; // chaining
+
+    return new_node;
 }
 
 /*
@@ -81,6 +108,11 @@ static void destroy_node(Node node) {
     (void)node;
 
     // TODO: Implement this helper.
+    if(node != NULL) {
+        free(node->pair.key);
+
+        free(node);
+    }
 }
 
 /*
@@ -97,8 +129,26 @@ static Node find_node(Dictionary D, const char *key) {
     (void)key;
 
     // TODO: Replace this placeholder return value.
-    return NULL;
+    if(D == NULL || key == NULL) {
+        return NULL;
+    }
+
+    size_t bucket_index = ht_hash(key, D->num_buckets); // use hash function to get index
+
+    Node current = D->buckets[bucket_index]; // start at head of bucket
+
+    while(current != NULL) {
+
+        if(current->pair.key != NULL && strcmp(current->pair.key, key) == 0) {
+            return current;
+        }
+    
+    current = current->next;
+    }
+
+    return NULL; // if key not found
 }
+
 
 /*
  * dictionary_create
@@ -111,7 +161,29 @@ Dictionary dictionary_create(size_t num_buckets) {
     // TODO: Allocate and initialize the bucket array.
 
     // TODO: Replace this placeholder return value.
-    return NULL;
+    Dictionary new_dict = malloc(sizeof(struct DictionaryObj));
+
+    Node *buckets = malloc(num_buckets * sizeof(Node));
+
+    if(new_dict == NULL || buckets == NULL) {
+        free(new_dict);
+
+        free(buckets);
+
+        return NULL;
+    }
+
+    new_dict -> buckets = buckets; // assign bucket array to dictionary
+
+    new_dict -> num_buckets = num_buckets; // assign number of buckets to dictionary
+
+    new_dict -> size = 0;
+
+    for(size_t i = 0; i < num_buckets; i++) {
+        new_dict->buckets[i] = NULL; 
+    }
+
+    return new_dict;
 }
 
 /*
@@ -125,6 +197,27 @@ void dictionary_destroy(Dictionary *pD) {
     // TODO: Free the bucket array.
     // TODO: Free the DictionaryObj.
     // TODO: Set *pD to NULL.
+    if(pD == NULL || *pD == NULL) {
+        return;
+    }
+
+    for(size_t i = 0; i < (*pD)->num_buckets; i++) {
+        Node current = (*pD)->buckets[i];
+
+        while(current != NULL) {
+            Node next_node = current->next;
+
+            destroy_node(current);
+
+            current = next_node;
+        }
+    }
+
+    free((*pD)->buckets);
+
+    free(*pD);
+
+    *pD = NULL;
 }
 
 /*
@@ -140,9 +233,35 @@ bool dictionary_insert(Dictionary D, const char *key, int value) {
     // TODO: Create a new node.
     // TODO: Insert the new node at the end of the correct bucket chain.
     // TODO: Update dictionary size.
-
     // TODO: Replace this placeholder return value.
-    return false;
+    if(D == NULL || key == NULL) {
+        return false;
+    }
+
+    if(find_node(D, key) != NULL) { // check for a duplicate key
+        return false;
+    }
+
+    Node new_node = create_node(key, value); // create new node to store KV entry
+
+    size_t bucket_index = ht_hash(key, D->num_buckets);
+
+    if(D->buckets[bucket_index] == NULL) { // if bucket empty insert at head of chain
+        D->buckets[bucket_index] = new_node;
+
+    } else { 
+        Node current = D->buckets[bucket_index];
+        
+        while(current->next != NULL) {
+            current = current->next;
+        }
+
+        current->next = new_node; // new node goes to end of chain when we reach null
+    }
+
+    D->size++;
+
+    return true;
 }
 
 /*
@@ -159,6 +278,14 @@ bool dictionary_update(Dictionary D, const char *key, int value) {
     // TODO: If not found, return false.
 
     // TODO: Replace this placeholder return value.
+    Node found_node = find_node(D, key);
+
+    if(found_node != NULL) {
+        found_node->pair.value = value;
+
+        return true;
+    }
+
     return false;
 }
 
@@ -177,6 +304,38 @@ bool dictionary_delete(Dictionary D, const char *key) {
     // TODO: Update dictionary size.
 
     // TODO: Replace this placeholder return value.
+    if(D == NULL || key == NULL) {
+        return false;
+    }
+    
+    size_t bucket_index = ht_hash(key, D->num_buckets);
+
+    Node current = D->buckets[bucket_index];
+
+    Node previous = NULL;
+
+    while(current != NULL) {
+
+        if(strcmp(current->pair.key, key) == 0) {
+            if(previous == NULL) {
+                D->buckets[bucket_index] = current->next; // if head of chain, update bucket head
+
+            } else { // after first node in chain, update previous node to point to next node and repeat until end of chain
+                previous->next = current->next; // point previous node to next node skipping current node to be deleted
+            }
+
+            destroy_node(current);
+
+            D->size--; // decrement dictionary size
+
+            return true;
+        }
+
+        previous = current;
+    
+        current = current->next;
+    }
+
     return false;
 }
 
@@ -192,6 +351,12 @@ KVPair *dictionary_find(Dictionary D, const char *key) {
     // TODO: Return a pointer to the node's KVPair if found.
 
     // TODO: Replace this placeholder return value.
+    Node found_node = find_node(D, key);
+
+    if(found_node != NULL) {
+        return &(found_node->pair);
+    }
+
     return NULL;
 }
 
@@ -207,4 +372,13 @@ void dictionary_print(FILE *out, Dictionary D) {
     // TODO: For each bucket, traverse the chain in order.
     // TODO: Print each pair using the required format:
     //       key: value
+    for(size_t i = 0; i < D->num_buckets; i++) {
+        Node current = D->buckets[i];
+
+        while(current != NULL) {
+            fprintf(out, "%s: %d\n", current->pair.key, current->pair.value);
+
+            current = current->next;
+        }
+    }
 }

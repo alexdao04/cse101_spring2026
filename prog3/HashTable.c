@@ -1,12 +1,6 @@
 #include "HashTable.h"
 
 /*
- * Prog 3 uses your Hwk 3 hash table implementation.
- * If you completed Hwk 3, you may replace this file with your completed
- * HashTable.c implementation.
- */
-
-/*
  * ht_string2int
  * Converts a string into an unsigned integer hash code.
  *
@@ -37,5 +31,11 @@ size_t ht_hash(const char *key, size_t num_buckets) {
     (void)num_buckets;
 
     // TODO: Replace this placeholder return value.
-    return 0;
+    if(key == NULL || num_buckets == 0) {
+        return 0;
+    }
+
+    unsigned long hash_code = ht_string2int(key);
+
+    return hash_code % num_buckets; // convert to index
 }
