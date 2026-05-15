@@ -283,7 +283,13 @@ bool dictionary_update(Dictionary D, const char *key, int value) {
     // TODO: If not found, return false.
 
     // TODO: Replace this placeholder return value.
+    Node found_node = find_node(D, key);
 
+    if(found_node != NULL) {
+        found_node->pair.value = value;
+
+        return true;
+    }
     return false;
 }
 
