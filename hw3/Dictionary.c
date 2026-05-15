@@ -94,7 +94,6 @@ static Node create_node(const char *key, int value) {
     new_node->next = NULL; // chaining
 
     return new_node;
-
 }
 
 /*
@@ -114,7 +113,6 @@ static void destroy_node(Node node) {
         free(node->pair.key);
 
         free(node);
-
     }
 }
 
@@ -146,9 +144,10 @@ static Node find_node(Dictionary D, const char *key) {
             return current;
         }
 
-    current = current->next; // move to next node in chain
+    current = current->next;
 
     }
+    return NULL; // if key not found
 }
 
 
@@ -164,11 +163,12 @@ Dictionary dictionary_create(size_t num_buckets) {
 
     // TODO: Replace this placeholder return value.
     Dictionary new_dict = malloc(sizeof(struct DictionaryObj));
+
     Node *buckets = malloc(num_buckets * sizeof(Node));
 
-    if(new_dict == NULL || buckets == NULL) { // NO DANGLING POINTERS PLEASE
+    if(new_dict == NULL || buckets == NULL) {
         free(new_dict);
-        
+
         free(buckets);
 
         return NULL;
@@ -181,9 +181,9 @@ Dictionary dictionary_create(size_t num_buckets) {
     new_dict -> size = 0;
 
     for(size_t i = 0; i < num_buckets; i++) {
-        buckets[i] = NULL; // all buckets in the array start as NULL until otherwise
-
+        new_dict->buckets[i] = NULL; 
     }
+    return new_dict;
 }
 
 /*
@@ -197,6 +197,27 @@ void dictionary_destroy(Dictionary *pD) {
     // TODO: Free the bucket array.
     // TODO: Free the DictionaryObj.
     // TODO: Set *pD to NULL.
+    if(pD == NULL || *pD == NULL) {
+        return;
+    }
+
+    for(size_t i = 0; i < (*pD)->num_buckets; i++) {
+        Node current = (*pD)->buckets[i];
+
+        while(current != NULL) {
+            Node next_node = current->next;
+
+            destroy_node(current);
+
+            current = next_node;
+        }
+    }
+
+    free((*pD)->buckets);
+
+    free(*pD);
+
+    *pD = NULL;
 }
 
 /*
@@ -214,7 +235,38 @@ bool dictionary_insert(Dictionary D, const char *key, int value) {
     // TODO: Update dictionary size.
 
     // TODO: Replace this placeholder return value.
-    return false;
+    if(D == NULL || key == NULL) {
+        return false;
+    }
+
+    if(find_node(D, key) != NULL) { // check for a duplicate key
+        return false;
+    }
+
+    Node new_node = create_node(key, value); // create new node to store KV entry
+
+    for(size_t i = 0; i < D->num_buckets; i++) {
+
+        if(D->buckets[i] == NULL) {
+            D->buckets[i] = new_node; // insert new node at bucket if empty
+
+            D->size++; // update size of dictionary
+
+            return true;
+        }
+
+        Node current = D->buckets[i]; // otherwise traverse chain to end and insert
+
+        while(current->next != NULL) {
+            current = current->next; // traversal logic
+        }
+
+        current->next = new_node; // insert new node at the end
+    }
+
+    D->size++; // update size of dictionary
+
+    return true; // insert worked!
 }
 
 /*
@@ -231,6 +283,7 @@ bool dictionary_update(Dictionary D, const char *key, int value) {
     // TODO: If not found, return false.
 
     // TODO: Replace this placeholder return value.
+
     return false;
 }
 
@@ -249,6 +302,36 @@ bool dictionary_delete(Dictionary D, const char *key) {
     // TODO: Update dictionary size.
 
     // TODO: Replace this placeholder return value.
+    find_node(D, key);
+
+    for(size_t i = 0; i < D->num_buckets; i++) {
+        Node current = D->buckets[i];
+
+        Node previous = NULL;
+
+        while(current != NULL) {
+
+            if(strcmp(current->pair.key, key) == 0) {
+                if(previous == NULL) {
+                    D->buckets[i] = current->next; // if head of chain, update bucket head
+
+                } else { // after first node in chain, update previous node to point to next node and repeat until end of chain
+                    previous->next = current->next; // point previous node to next node skipping current node to be deleted
+                }
+
+                destroy_node(current);
+
+                D->size--; // decrement dictionary size
+
+                return true;
+            }
+
+            previous = current;
+            
+            current = current->next;
+        }
+    }
+
     return false;
 }
 
@@ -264,6 +347,12 @@ KVPair *dictionary_find(Dictionary D, const char *key) {
     // TODO: Return a pointer to the node's KVPair if found.
 
     // TODO: Replace this placeholder return value.
+    Node found_node = find_node(D, key);
+
+    if(found_node != NULL) {
+        return &(found_node->pair);
+    }
+
     return NULL;
 }
 
@@ -279,4 +368,13 @@ void dictionary_print(FILE *out, Dictionary D) {
     // TODO: For each bucket, traverse the chain in order.
     // TODO: Print each pair using the required format:
     //       key: value
+    for(size_t i = 0; i < D->num_buckets; i++) {
+        Node current = D->buckets[i];
+
+        while(current != NULL) {
+            fprintf(out, "%s: %d\n", current->pair.key, current->pair.value);
+
+            current = current->next;
+        }
+    }
 }
