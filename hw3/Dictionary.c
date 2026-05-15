@@ -243,18 +243,18 @@ bool dictionary_insert(Dictionary D, const char *key, int value) {
     }
 
     Node new_node = create_node(key, value); // create new node to store KV entry
-    
+   
+    if(new_node == NULL) {
+        return false;
+    }
+
     size_t bucket_index = ht_hash(key, D->num_buckets);
 
-    for(size_t i = 0; i < bucket_index; i++) {
-        if(D->buckets[i] == NULL) {
-            D->buckets[i] = new_node;
+    new_node->next = D->buckets[bucket_index];
 
-            D->size++;
+    D->buckets[bucket_index] = new_node;
 
-            return true;
-        }
-    }
+    D->size++;
 
     return true;
 }
@@ -299,34 +299,36 @@ bool dictionary_delete(Dictionary D, const char *key) {
     // TODO: Update dictionary size.
 
     // TODO: Replace this placeholder return value.
-    find_node(D, key);
+    if(D == NULL || key == NULL) {
+        return false;
+    }
+    
+    size_t bucket_index = ht_hash(key, D->num_buckets);
 
-    for(size_t i = 0; i < D->num_buckets; i++) {
-        Node current = D->buckets[i];
+    Node current = D->buckets[bucket_index];
 
-        Node previous = NULL;
+    Node previous = NULL;
 
-        while(current != NULL) {
+    while(current != NULL) {
 
-            if(strcmp(current->pair.key, key) == 0) {
-                if(previous == NULL) {
-                    D->buckets[i] = current->next; // if head of chain, update bucket head
+        if(strcmp(current->pair.key, key) == 0) {
+            if(previous == NULL) {
+                D->buckets[bucket_index] = current->next; // if head of chain, update bucket head
 
-                } else { // after first node in chain, update previous node to point to next node and repeat until end of chain
-                    previous->next = current->next; // point previous node to next node skipping current node to be deleted
-                }
-
-                destroy_node(current);
-
-                D->size--; // decrement dictionary size
-
-                return true;
+            } else { // after first node in chain, update previous node to point to next node and repeat until end of chain
+                previous->next = current->next; // point previous node to next node skipping current node to be deleted
             }
 
-            previous = current;
-            
-            current = current->next;
+            destroy_node(current);
+
+            D->size--; // decrement dictionary size
+
+            return true;
         }
+
+        previous = current;
+    
+        current = current->next;
     }
 
     return false;
