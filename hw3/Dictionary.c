@@ -243,16 +243,21 @@ bool dictionary_insert(Dictionary D, const char *key, int value) {
     }
 
     Node new_node = create_node(key, value); // create new node to store KV entry
-   
-    if(new_node == NULL) {
-        return false;
-    }
 
     size_t bucket_index = ht_hash(key, D->num_buckets);
 
-    new_node->next = D->buckets[bucket_index];
+    if(D->buckets[bucket_index] == NULL) { // if bucket empty insert at head of chain
+        D->buckets[bucket_index] = new_node;
 
-    D->buckets[bucket_index] = new_node;
+    } else { 
+        Node current = D->buckets[bucket_index];
+        
+        while(current->next != NULL) {
+            current = current->next;
+        }
+
+        current->next = new_node; // new node goes to end of chain when we reach null
+    }
 
     D->size++;
 
