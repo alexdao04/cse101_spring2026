@@ -3,7 +3,7 @@
 #------------------------------------------------------------------------------
 
 CC = gcc
-CFLAGS = -std=c17 -Wall
+CFLAGS = -std=c17 -Wall -g # -g added for debugging purposes (GDB/LLDB)
 
 TARGET = prog3
 

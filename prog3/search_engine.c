@@ -1,5 +1,4 @@
 #include "search_engine.h"
-
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,8 +18,32 @@ bool normalize_word(const char *input, char *output, size_t output_size) {
     (void)output;
     (void)output_size;
 
-    // TODO: Implement word normalization.
-    return false;
+    if(output_size == 0) {
+        return false; // empty output (you cant write something that doesnt exist)
+    }
+
+    while(input != NULL && *input != '\0') { // go through input and stop at null terminator
+        if(isalnum(*input)) { // isalnum should check whether all inputs present are ALPHANUMERIC.
+            
+            if(isupper(*input)) {
+                *output = tolower(*input);
+            
+            } else {
+                *output = *input;
+            }
+
+            output++;
+
+            output_size--; // decrease output size by 1 when we add a char to output
+            // this is so we dont write past the end
+            if(output_size == 0) break;
+        }
+        input++;
+    }
+
+    *output = '\0';
+
+    return output_size < MAX_WORD_LENGTH;
 }
 
 /*
@@ -48,12 +71,44 @@ SearchEngine *create_search_engine(const char *documents_filename) {
 
     // TODO: Implement search engine creation and document indexing.
     FILE *f_in = fopen(documents_filename, "r");
+    
     if(f_in == NULL) {
         fprintf(stderr, "Error: Could not open file %s\n", documents_filename);
         return NULL;
     }
     
+    int num_docs;
+    
+    fscanf(f_in, "%d\n", &num_docs);
+    
+    SearchEngine *engine = malloc(sizeof(SearchEngine)); // allocate memory for search engine itself
+    // that way we can point to its associated documents and num_documents fields
+    // engine points to newly allocated SearchEngine object
+    if(engine == NULL) return NULL;
+    
+    engine -> num_documents = num_docs;
+    
+    engine -> documents = malloc(num_docs * sizeof(Document)); // allocate memory for each document present in file
+    
+    for(int i = 0; i < num_docs; i++) {
+        int doc_id; // doc_id will convert to its associated index in the documents array
 
+        fscanf(f_in, "DOC %d\n", &doc_id);
+
+        engine -> documents[i].doc_id = doc_id;
+
+        engine -> documents[i].index = dictionary_create(DOCUMENT_BUCKETS);
+
+        if(engine -> documents[i].index == NULL) {
+            destroy_search_engine(&engine);
+
+            return NULL;
+        }
+
+        build_document_index(&engine -> documents[i], f_in); // build index for current document
+    }
+
+    return engine;
 }
 
 /*
@@ -91,17 +146,13 @@ bool add_word_to_document(Document *doc, const char *word) {
     (void)doc;
     (void)word;
 
-    dictionary_find(doc->index, word, NULL);
+    KVPair *kv = dictionary_find(doc->index, word);
 
-    if(dictionary_find(doc->index, word, NULL) == NULL) {
-        dictionary_insert(doc->index, word, 1);
-
+    if(kv == NULL) {
+        return dictionary_insert(doc->index, word, 1); // insert with frequency 1 as dictionary has no entries for this word
+    
     } else {
-        int old_value;
-
-        dictionary_find(doc->index, word, &old_value);
-
-        dictionary_update(doc->index, word, &old_value + 1);
+        return dictionary_update(doc->index, word, kv->value + 1); // increment the frequency value by 1
     }
 
     return true;
@@ -123,19 +174,26 @@ bool build_document_index(Document *doc, FILE *in) {
 
     // TODO: Implement document indexing.
     char line[MAX_LINE_LENGTH];
+
     while(fgets(line, MAX_LINE_LENGTH, in) != NULL) {
-        if(strcmp(line, "END\n") == 0) {
+
+        if(strncmp(line, "END", 3) == 0) { // check if those three chars exactly match "END"
             break;
         }
-        char *token = strtok(line, " \t\n");
+
+        char *token = strtok(line, " \t\n"); // we split spaces tabs and newlines to parse out words
+
         while(token != NULL) {
             char normalized[MAX_WORD_LENGTH];
+
             if(normalize_word(token, normalized, MAX_WORD_LENGTH)) {
                 add_word_to_document(doc, normalized);
             }
+
             token = strtok(NULL, " \t\n");
         }
     }
+    return true;
 }
 
 /*
@@ -151,19 +209,10 @@ int get_word_count(Document *doc, const char *word) {
     (void)word;
 
     // TODO: Implement lookup.
-    dictionary_find(doc->index, word, NULL);
+    KVPair *kv = dictionary_find(doc->index, word);
 
-    for(int i = 0; i < doc->index->num_buckets; i++) {
-        KVPair *kv = doc->index->buckets[i];
-
-        while(kv != NULL) {
-            if(strcmp(kv->key, word) == 0) {
-
-                return kv->value;
-            }
-
-            kv = kv->next;
-        }
+    if(kv != NULL) { // stored frequency value for target word
+        return kv->value;
     }
 
     return 0;
@@ -235,7 +284,7 @@ void process_search_command(SearchEngine *engine, const char *query_text) {
 
     strncpy(query_copy, query_text, MAX_LINE_LENGTH);
 
-    query_copy[MAX_LINE_LENGTH - 1] = "\0";
+    query_copy[MAX_LINE_LENGTH - 1] = '\0'; // null terminator to prevent out of bounds
 }
 
 /*
@@ -252,11 +301,11 @@ void process_remove_command(SearchEngine *engine, int doc_id, const char *word) 
     (void)doc_id;
     (void)word;
 
-    if(dictionary_find(engine->documents[doc_id].index, word, NULL) == NULL) {
+    if(dictionary_find(engine->documents[doc_id].index, word) == NULL) {
         printf("REMOVE %d %s: not found\n", doc_id, word);
 
     } else {
-        dictionary_remove(engine->documents[doc_id].index, word);
+        dictionary_delete(engine->documents[doc_id].index, word);
 
         printf("REMOVE %d %s: removed\n", doc_id, word);
     }
@@ -274,7 +323,8 @@ void process_print_command(SearchEngine *engine, int doc_id) {
     (void)doc_id;
 
     printf("PRINT %d:\n", doc_id);
-    dictionary_print(engine->documents[doc_id].index);
+    dictionary_print(stdout, engine->documents[doc_id].index);
+    // find matching document and print its dictionary contents
 }
 
 /*
