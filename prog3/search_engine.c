@@ -47,7 +47,13 @@ SearchEngine *create_search_engine(const char *documents_filename) {
     (void)documents_filename;
 
     // TODO: Implement search engine creation and document indexing.
-    return NULL;
+    FILE *f_in = fopen(documents_filename, "r");
+    if(f_in == NULL) {
+        fprintf(stderr, "Error: Could not open file %s\n", documents_filename);
+        return NULL;
+    }
+    
+
 }
 
 /*
@@ -62,7 +68,15 @@ SearchEngine *create_search_engine(const char *documents_filename) {
 void destroy_search_engine(SearchEngine **pEngine) {
     (void)pEngine;
 
-    // TODO: Implement cleanup.
+    for(int i = 0; i < (*pEngine)->num_documents; i++) {
+        dictionary_destroy(&(*pEngine)->documents[i].index);
+    }
+
+    free((*pEngine)->documents);
+
+    free(*pEngine);
+
+    *pEngine = NULL;
 }
 
 /*
@@ -77,8 +91,20 @@ bool add_word_to_document(Document *doc, const char *word) {
     (void)doc;
     (void)word;
 
-    // TODO: Implement word-frequency insertion/update.
-    return false;
+    dictionary_find(doc->index, word, NULL);
+
+    if(dictionary_find(doc->index, word, NULL) == NULL) {
+        dictionary_insert(doc->index, word, 1);
+
+    } else {
+        int old_value;
+
+        dictionary_find(doc->index, word, &old_value);
+
+        dictionary_update(doc->index, word, &old_value + 1);
+    }
+
+    return true;
 }
 
 /*
@@ -96,7 +122,20 @@ bool build_document_index(Document *doc, FILE *in) {
     (void)in;
 
     // TODO: Implement document indexing.
-    return false;
+    char line[MAX_LINE_LENGTH];
+    while(fgets(line, MAX_LINE_LENGTH, in) != NULL) {
+        if(strcmp(line, "END\n") == 0) {
+            break;
+        }
+        char *token = strtok(line, " \t\n");
+        while(token != NULL) {
+            char normalized[MAX_WORD_LENGTH];
+            if(normalize_word(token, normalized, MAX_WORD_LENGTH)) {
+                add_word_to_document(doc, normalized);
+            }
+            token = strtok(NULL, " \t\n");
+        }
+    }
 }
 
 /*
@@ -112,6 +151,21 @@ int get_word_count(Document *doc, const char *word) {
     (void)word;
 
     // TODO: Implement lookup.
+    dictionary_find(doc->index, word, NULL);
+
+    for(int i = 0; i < doc->index->num_buckets; i++) {
+        KVPair *kv = doc->index->buckets[i];
+
+        while(kv != NULL) {
+            if(strcmp(kv->key, word) == 0) {
+
+                return kv->value;
+            }
+
+            kv = kv->next;
+        }
+    }
+
     return 0;
 }
 
@@ -128,7 +182,13 @@ int score_document(Document *doc, char query_words[][MAX_WORD_LENGTH], int num_w
     (void)num_words;
 
     // TODO: Implement scoring.
-    return 0;
+    int freq_score = 0;
+
+    for(int i = 0; i < num_words; i++) {
+        freq_score += get_word_count(doc, query_words[i]);
+    }
+
+    return freq_score;
 }
 
 /*
@@ -143,6 +203,16 @@ void process_count_command(SearchEngine *engine, int doc_id, const char *word) {
     (void)word;
 
     // TODO: Normalize word, compute frequency, and print the required output.
+    char normalized[MAX_WORD_LENGTH];
+    if(normalize_word(word, normalized, MAX_WORD_LENGTH)) {
+        int freq = get_word_count(&engine->documents[doc_id], normalized);
+
+        printf("COUNT %d %s: %d\n", doc_id, word, freq);
+
+    } else {
+        printf("COUNT %d %s: 0\n", doc_id, word);
+
+    }
 }
 
 /*
@@ -161,7 +231,11 @@ void process_search_command(SearchEngine *engine, const char *query_text) {
     (void)engine;
     (void)query_text;
 
-    // TODO: Parse query words, normalize them, score all documents, and print output.
+    char query_copy[MAX_LINE_LENGTH];
+
+    strncpy(query_copy, query_text, MAX_LINE_LENGTH);
+
+    query_copy[MAX_LINE_LENGTH - 1] = "\0";
 }
 
 /*
@@ -178,7 +252,14 @@ void process_remove_command(SearchEngine *engine, int doc_id, const char *word) 
     (void)doc_id;
     (void)word;
 
-    // TODO: Normalize word, remove it from the document dictionary, and print output.
+    if(dictionary_find(engine->documents[doc_id].index, word, NULL) == NULL) {
+        printf("REMOVE %d %s: not found\n", doc_id, word);
+
+    } else {
+        dictionary_remove(engine->documents[doc_id].index, word);
+
+        printf("REMOVE %d %s: removed\n", doc_id, word);
+    }
 }
 
 /*
@@ -192,7 +273,8 @@ void process_print_command(SearchEngine *engine, int doc_id) {
     (void)engine;
     (void)doc_id;
 
-    // TODO: Print the required header, then call dictionary_print.
+    printf("PRINT %d:\n", doc_id);
+    dictionary_print(engine->documents[doc_id].index);
 }
 
 /*
@@ -214,5 +296,37 @@ void process_command(SearchEngine *engine, char *line) {
     (void)engine;
     (void)line;
 
-    // TODO: Implement command parsing and dispatch.
+    if(strncmp(line, "COUNT", 5) == 0) {
+        int doc_id;
+        char word[MAX_WORD_LENGTH];
+
+        sscanf(line, "COUNT %d %s", &doc_id, word);
+
+        process_count_command(engine, doc_id, word);
+
+    } else if(strncmp(line, "SEARCH", 6) == 0) {
+        char query_text[MAX_LINE_LENGTH];
+
+        sscanf(line, "SEARCH %[^\n]", query_text);
+
+        process_search_command(engine, query_text);
+
+    } else if(strncmp(line, "REMOVE", 6) == 0) {
+        int doc_id;
+        char word[MAX_WORD_LENGTH];
+
+        sscanf(line, "REMOVE %d %s", &doc_id, word);
+
+        process_remove_command(engine, doc_id, word);
+
+    } else if(strncmp(line, "PRINT", 5) == 0) {
+        int doc_id;
+
+        sscanf(line, "PRINT %d", &doc_id);
+
+        process_print_command(engine, doc_id);
+
+    } else {
+        fprintf(stderr, "Error: Unknown command\n");
+    }
 }
