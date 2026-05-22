@@ -258,10 +258,10 @@ void process_count_command(SearchEngine *engine, int doc_id, const char *word) {
     if(normalize_word(word, normalized, MAX_WORD_LENGTH)) {
         int freq = get_word_count(&engine->documents[doc_id], normalized);
 
-        printf("COUNT %d %s: %d\n", doc_id, word, freq);
+        printf("COUNT %d %s: %d\n", doc_id, normalized, freq);
 
     } else {
-        printf("COUNT %d %s: 0\n", doc_id, word);
+        printf("COUNT %d %s: 0\n", doc_id, normalized);
 
     }
 }
@@ -345,13 +345,20 @@ void process_remove_command(SearchEngine *engine, int doc_id, const char *word) 
     (void)doc_id;
     (void)word;
 
-    if(dictionary_find(engine->documents[doc_id].index, word) == NULL) {
+    char normalized[MAX_WORD_LENGTH];
+
+    if(!normalize_word(word, normalized, MAX_WORD_LENGTH)) {
+        printf("REMOVE %d %s: not found\n", doc_id, normalized);
+        return;
+    }
+
+    if(dictionary_find(engine->documents[doc_id].index, normalized) == NULL) {
         printf("REMOVE %d %s: not found\n", doc_id, word);
 
     } else {
-        dictionary_delete(engine->documents[doc_id].index, word);
+        dictionary_delete(engine->documents[doc_id].index, normalized);
 
-        printf("REMOVE %d %s: removed\n", doc_id, word);
+        printf("REMOVE %d %s: removed\n", doc_id, normalized);
     }
 }
 
