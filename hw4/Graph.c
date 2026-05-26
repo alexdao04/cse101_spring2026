@@ -52,7 +52,20 @@ Graph graph_create(int n) {
     // 5. Initialize num_vertices and num_edges.
     // 6. Return the new graph.
     (void)n;
-    return NULL;
+
+    if(n <= 0) {
+        return NULL;
+    }
+
+    // note how we used calloc here because it initializes to NULL (or so i think)
+    Graph G = calloc(sizeof(struct GraphObj), 1); // 1-index
+
+    NeighborNode** adj_lists = calloc((n+1), sizeof(NeighborNode*));
+
+    G->num_vertices = n;
+    G->num_edges = 0;
+
+    return G;
 }
 
 void graph_destroy(Graph* pG) {
@@ -63,6 +76,9 @@ void graph_destroy(Graph* pG) {
     // 4. Free the graph object.
     // 5. Set *pG to NULL.
     (void)pG;
+    while(pG != NULL && *pG != NULL) {
+        Graph G = *pG;
+    }
 }
 
 /* access functions ---------------------------------------------------------- */
@@ -70,13 +86,23 @@ void graph_destroy(Graph* pG) {
 int graph_order(Graph G) {
     // TODO: Return the number of vertices, or 0 if G is NULL.
     (void)G;
-    return 0;
+
+    if(G == NULL) {
+        return 0;
+    }
+
+    return G->num_vertices;
 }
 
 int graph_size(Graph G) {
     // TODO: Return the number of logical edges/arcs, or 0 if G is NULL.
     (void)G;
-    return 0;
+
+    if(G == NULL) {
+        return 0;
+    }
+
+    return G->num_edges;
 }
 
 bool graph_has_edge(Graph G, int u, int v) {
