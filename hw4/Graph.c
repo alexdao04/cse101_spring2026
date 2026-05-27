@@ -60,7 +60,7 @@ Graph graph_create(int n) {
     // note how we used calloc here because it initializes to NULL (or so i think)
     Graph G = calloc(sizeof(struct GraphObj), 1); // 1-index
 
-    NeighborNode** adj_lists = calloc((n+1), sizeof(NeighborNode*));
+    G->adj_lists = calloc((n+1), sizeof(NeighborNode*));
 
     G->num_vertices = n;
     G->num_edges = 0;
@@ -80,10 +80,9 @@ void graph_destroy(Graph* pG) {
         Graph G = *pG;
         // pointer to pointer to struct containing GraphObj
         // we can modify pG this way similarly to how we handled G in later helper functions
-        NeighborNode *adj_list = G->adj_lists;
         
         for(int i = 1; i <= G->num_vertices; i++) {
-            free_adj_list(adj_list[i]);
+            free_adj_list(&G->adj_lists[i]);
         }
         
         free(G->adj_lists);
@@ -96,14 +95,42 @@ void graph_destroy(Graph* pG) {
 
 /* access functions ---------------------------------------------------------- */
 
-// we will use these as needed
-static bool is_valid_vertex(Graph G, int v);
-static NeighborNode* create_neighbor(int vertex, int weight);
-static void free_adj_list(NeighborNode* head);
-static NeighborNode* find_neighbor(NeighborNode* head, int v);
-static bool insert_neighbor_sorted(NeighborNode** pHead, int vertex, int weight);
-static bool remove_neighbor(NeighborNode** pHead, int vertex);
-static int list_length(NeighborNode* head);
+static void free_adj_list(NeighborNode* head) {
+    // free_adj_list is a helper function that we can use to free an adjacency list by recursively freeing each node in the list
+    if(head == NULL) {
+        return;
+    
+    } else { 
+        free_adj_list(head->next); // go to the next element in the list and free that
+        // then free the head so we dont leave things dangling
+        free(head); // but what about the rest of the list? 
+        // we can loop this in our other functions and just do this for each element you need
+    }
+}
+
+
+static bool insert_neighbor_sorted(NeighborNode** pHead, int vertex, int weight) {
+    // insert_neighbor_sorted is a helper function that we can use to insert a neighbor into an adjacency list in sorted order by vertex number
+    if(pHead == NULL) {
+        return false;
+    }
+}
+
+static bool remove_neighbor(NeighborNode** pHead, int vertex) {
+    // remove_neighbor is a helper function that we can use to undo an insertion if the second insertion in graph_add_edge fails
+    if(pHead == NULL) {
+        return false;
+    }
+}
+
+static int list_length(NeighborNode* head) {
+    // list_length is a helper function that we can use to get the degree of a vertex by counting the number of neighbors in its adjacency list
+    if(head == NULL) {
+        return 0;
+    } else {
+        
+    }
+}
 
 int graph_order(Graph G) {
     // TODO: Return the number of vertices, or 0 if G is NULL.
