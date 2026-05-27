@@ -78,10 +78,32 @@ void graph_destroy(Graph* pG) {
     (void)pG;
     while(pG != NULL && *pG != NULL) {
         Graph G = *pG;
+        // pointer to pointer to struct containing GraphObj
+        // we can modify pG this way similarly to how we handled G in later helper functions
+        NeighborNode *adj_list = G->adj_lists;
+        
+        for(int i = 1; i <= G->num_vertices; i++) {
+            free_adj_list(adj_list[i]);
+        }
+        
+        free(G->adj_lists);
+
+        free(G);
+
+        *pG = NULL;
     }
 }
 
 /* access functions ---------------------------------------------------------- */
+
+// we will use these as needed
+static bool is_valid_vertex(Graph G, int v);
+static NeighborNode* create_neighbor(int vertex, int weight);
+static void free_adj_list(NeighborNode* head);
+static NeighborNode* find_neighbor(NeighborNode* head, int v);
+static bool insert_neighbor_sorted(NeighborNode** pHead, int vertex, int weight);
+static bool remove_neighbor(NeighborNode** pHead, int vertex);
+static int list_length(NeighborNode* head);
 
 int graph_order(Graph G) {
     // TODO: Return the number of vertices, or 0 if G is NULL.
@@ -110,7 +132,10 @@ bool graph_has_edge(Graph G, int u, int v) {
     (void)G;
     (void)u;
     (void)v;
-    return false;
+
+    if(G == NULL) {
+        return false;
+    }
 }
 
 int graph_get_weight(Graph G, int u, int v) {
@@ -118,14 +143,22 @@ int graph_get_weight(Graph G, int u, int v) {
     (void)G;
     (void)u;
     (void)v;
-    return INF;
+
+    if(G == NULL) {
+        return INF; // come back to this in a bit!
+    }
 }
 
 int graph_degree(Graph G, int v) {
     // TODO: Return the length of v's adjacency list, or -1 if invalid.
     (void)G;
     (void)v;
-    return -1;
+
+    if(G == NULL) {
+       return -1;
+    }
+
+    return list_length(G->adj_lists[v]);
 }
 
 /* manipulation procedures --------------------------------------------------- */
@@ -141,6 +174,20 @@ bool graph_add_arc(Graph G, int u, int v, int weight) {
     (void)u;
     (void)v;
     (void)weight;
+
+    while(G != NULL) {
+        if(u == v) {
+            return false;
+
+        } else if(graph_has_edge(G, u, v)) {
+            return false;
+
+        } else if(insert_neighbor_sorted(&G->adj_lists[u], v, weight)) {
+            G->num_edges++;
+            return true;
+        }
+    }
+
     return false;
 }
 
@@ -160,7 +207,25 @@ bool graph_add_edge(Graph G, int u, int v, int weight) {
     (void)u;
     (void)v;
     (void)weight;
-    return false;
+    
+    while(G != NULL) {
+        if(u == v) {
+            return false;
+
+        } else if(graph_has_edge(G, u, v) || graph_has_edge(G, v, u)) {
+            return false;
+
+        } else if(insert_neighbor_sorted(&G->adj_lists[u], v, weight)) {
+            if(insert_neighbor_sorted(&G->adj_lists[v], u, weight)) {
+                G->num_edges++;
+
+                return true;
+            
+            } else {
+                remove_neighbor(&G->adj_lists[u], v);
+            }
+        }
+    }
 }
 
 /* output -------------------------------------------------------------------- */
@@ -177,4 +242,20 @@ void graph_print(FILE* out, Graph G) {
     // Do nothing if out == NULL or G == NULL.
     (void)out;
     (void)G;
+
+    if(out == NULL || G == NULL) {
+        return;
+    
+    } else if(G->num_vertices > 0) {
+        for(int i = 1; i <= G->num_vertices; i++) {
+            fprintf(out, "%d:", i); // print individual vertex first
+            // then we go through list of neighbors w/ vertex and weight and print those out
+
+            NeighborNode* curr = G->adj_lists[i];
+
+            while(curr != NULL) {
+                fprintf(out, " (%d, %d)", curr->vertex, curr->weight);
+            }
+        }
+    }
 }
