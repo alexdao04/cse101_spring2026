@@ -292,6 +292,10 @@ int graph_degree(Graph G, int v) {
        return -1;
     }
 
+    if(v <= 0 || v > G->num_vertices) {
+        return -1;
+    }
+
     return list_length(G->adj_lists[v]);
 }
 
@@ -309,7 +313,9 @@ bool graph_add_arc(Graph G, int u, int v, int weight) {
     (void)v;
     (void)weight;
 
-    if(G == NULL || u <= 0 || v <= 0 || u > G->num_vertices || v > G->num_vertices || weight < 0) {
+    if(G == NULL || u <= 0 || v <= 0 || u > G->num_vertices 
+        || v > G->num_vertices || weight <= 0) {
+        // forgive me for the long guard condition but this is the nuclear option
         return false;
     }
 
@@ -347,7 +353,9 @@ bool graph_add_edge(Graph G, int u, int v, int weight) {
     (void)v;
     (void)weight;
 
-    if(G == NULL || u <= 0 || v <= 0 || u > G->num_vertices || v > G->num_vertices || weight < 0) {
+    if(G == NULL || u <= 0 || v <= 0 || u > G->num_vertices 
+        || v > G->num_vertices || weight <= 0) {
+        // again, nuclear long guard clause option
         return false;
     }
     
@@ -399,10 +407,12 @@ void graph_print(FILE* out, Graph G) {
             NeighborNode* curr = G->adj_lists[i];
 
             while(curr != NULL) {
-                fprintf(out, " (%d, %d)\n", curr->vertex, curr->weight);
+                fprintf(out, " (%d, %d)", curr->vertex, curr->weight);
 
                 curr = curr->next;
             }
+
+            fprintf(out, "\n");
         }
     }
 }
