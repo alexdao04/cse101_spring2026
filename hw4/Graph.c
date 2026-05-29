@@ -93,7 +93,9 @@ static bool insert_neighbor_sorted(NeighborNode** pHead, int vertex, int weight)
     NewNode->next = curr;
 
     if(prev == NULL) {
-        pHead = &NewNode;
+        *pHead = NewNode;
+    } else {
+        prev->next = NewNode;
     }
 
     return true;
@@ -114,17 +116,19 @@ static bool remove_neighbor(NeighborNode** pHead, int vertex) {
         prev = curr;
 
         curr = curr->next;
+    }
 
-        if(curr != NULL && curr->vertex == vertex) {
-            if(prev == NULL) {
-                *pHead = curr->next;
-            } else {
-                prev->next = curr->next; // skip over to remove from list
-            }
-            free(curr); // no dangling pointers
+    if(curr != NULL && curr->vertex == vertex) {
+        if(prev == NULL) {
+            *pHead = curr->next;
 
-            return true;
+        } else {
+            prev->next = curr->next; // skip over to remove from list
         }
+
+        free(curr); // no dangling pointers
+
+        return true;
     }
 
     return false; // compiler was complaining (no return value)
@@ -235,7 +239,7 @@ bool graph_has_edge(Graph G, int u, int v) {
     (void)u;
     (void)v;
 
-    if(G == NULL) {
+    if(G == NULL || u <= 0 || v <= 0 || u > G->num_vertices || v > G->num_vertices || G->adj_lists[u] == NULL) {
         return false;
     }
 
@@ -262,11 +266,11 @@ int graph_get_weight(Graph G, int u, int v) {
     (void)u;
     (void)v;
 
-    if(G == NULL) {
+    if(G == NULL || u <= 0 || v <= 0 || u > G->num_vertices || v > G->num_vertices || G->adj_lists[u] == NULL) {
         return INF;
-    
-    } else if(G != NULL) {
-        NeighborNode *curr = G->adj_lists[u];
+    }
+
+    NeighborNode *curr = G->adj_lists[u];
 
         while(curr != NULL) {
             if(curr->vertex == v) {
@@ -275,7 +279,6 @@ int graph_get_weight(Graph G, int u, int v) {
 
             curr = curr->next;
         }
-    }
 
     return INF;
 }
@@ -305,6 +308,10 @@ bool graph_add_arc(Graph G, int u, int v, int weight) {
     (void)u;
     (void)v;
     (void)weight;
+
+    if(G == NULL || u <= 0 || v <= 0 || u > G->num_vertices || v > G->num_vertices || weight < 0) {
+        return false;
+    }
 
     while(G != NULL) {
         if(u == v) {
@@ -340,7 +347,7 @@ bool graph_add_edge(Graph G, int u, int v, int weight) {
     (void)v;
     (void)weight;
 
-    if(G == NULL) {
+    if(G == NULL || u <= 0 || v <= 0 || u > G->num_vertices || v > G->num_vertices || weight < 0) {
         return false;
     }
     
@@ -392,7 +399,9 @@ void graph_print(FILE* out, Graph G) {
             NeighborNode* curr = G->adj_lists[i];
 
             while(curr != NULL) {
-                fprintf(out, " (%d, %d)", curr->vertex, curr->weight);
+                fprintf(out, " (%d, %d)\n", curr->vertex, curr->weight);
+
+                curr = curr->next;
             }
         }
     }
