@@ -88,8 +88,8 @@ int graph_degree(Graph G, int v);
  * Returns false if:
  *   - G == NULL
  *   - u or v is invalid
- *   - u == v
  *   - weight <= 0
+ *   - u == v
  *   - an arc from u to v already exists
  *
  * The adjacency list for u must remain sorted by increasing vertex label.
@@ -108,8 +108,8 @@ bool graph_add_arc(Graph G, int u, int v, int weight);
  * Returns false if:
  *   - G == NULL
  *   - u or v is invalid
- *   - u == v
  *   - weight <= 0
+ *   - u == v
  *   - an edge/arc from u to v or v to u already exists
  *
  * If either direction already exists because of a previous graph_add_arc call,
