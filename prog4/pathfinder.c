@@ -26,7 +26,32 @@ PathResult* path_result_create(int n) {
     // 3. Allocate dist, parent, and visited arrays with length n + 1.
     // 4. Initialize fields and return the result.
     (void)n;
-    return NULL;
+
+    PathResult* result = malloc(sizeof(PathResult));
+
+    if(n <= 0 || result == NULL) {
+        return NULL; // base condition as specced in TODO
+    }
+
+    PathResult* dist = malloc(sizeof(int) * (n + 1));
+
+    PathResult* parent = malloc(sizeof(int) * (n + 1));
+
+    PathResult* visited = malloc(sizeof(bool) * (n + 1));
+
+    if(dist == NULL || parent == NULL || visited == NULL) {
+        // guard for malloc failure
+        free(dist);
+
+        free(parent);
+
+        free(visited);
+
+        free(result); // free the PathResult object last
+        return NULL;
+    }
+
+    return result;
 }
 
 void path_result_destroy(PathResult** pResult) {
@@ -35,7 +60,20 @@ void path_result_destroy(PathResult** pResult) {
     // 2. Free dist, parent, and visited arrays.
     // 3. Free the PathResult object.
     // 4. Set *pResult to NULL.
-    (void)pResult;
+
+    if(pResult == NULL || *pResult == NULL) {
+        return;
+    }
+    
+    free((*pResult)->dist);
+
+    free((*pResult)->parent);
+
+    free((*pResult)->visited);
+
+    free(*pResult);
+
+    *pResult = NULL;
 }
 
 void path_result_reset(PathResult* result, int source) {
