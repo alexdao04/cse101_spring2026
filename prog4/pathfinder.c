@@ -64,7 +64,7 @@ void path_result_destroy(PathResult** pResult) {
     if(pResult == NULL || *pResult == NULL) {
         return;
     }
-    
+
     free((*pResult)->dist);
 
     free((*pResult)->parent);
@@ -87,6 +87,11 @@ void path_result_reset(PathResult* result, int source) {
     //   result->source = source
     (void)result;
     (void)source;
+
+    if(result == NULL) {
+        return;
+    }
+
 }
 
 /* graph loading ------------------------------------------------------------- */
@@ -210,6 +215,8 @@ void pathfinder_print_reachable(FILE* out, Graph G, int source) {
     (void)out;
     (void)G;
     (void)source;
+
+    fprintf(out, "REACHABLE %d:", source);
 }
 
 void pathfinder_process_commands(FILE* in, FILE* out, Graph G) {
@@ -230,4 +237,70 @@ void pathfinder_process_commands(FILE* in, FILE* out, Graph G) {
     (void)in;
     (void)out;
     (void)G;
+
+    FILE* in = fopen("commands.in", "r");
+
+    if(in == NULL) {
+        fprintf(stderr, "Error: could not open commands.in\n");
+
+        return;
+    }
+
+    FILE* out = fopen("prog4.out", "w");
+
+    if(out == NULL) {
+        fprintf(stderr, "Error: could not open prog4.out\n");
+
+        return;
+    }
+
+    for(int i = 0; i < 100; i++) {
+        char command[20];
+
+        if(fscanf(in, "%s", command) != 1) {
+            break; // EOF or read error
+        }
+
+        if(strcmp(command, "PRINT") == 0) {
+            fprintf(out, "PRINT:\n");
+
+            graph_print(out, G);
+        }
+        else if(strcmp(command, "DIST") == 0) {
+            int source, destination;
+
+            if(fscanf(in, "%d %d", &source, &destination) != 2) {
+                fprintf(stderr, "Error: invalid DIST command format\n");
+
+                continue;
+            }
+
+            pathfinder_print_dist(out, G, source, destination);
+        }
+        else if(strcmp(command, "PATH") == 0) {
+            int source, destination;
+
+            if(fscanf(in, "%d %d", &source, &destination) != 2) {
+                fprintf(stderr, "Error: invalid PATH command format\n");
+
+                continue;
+            }
+
+            pathfinder_print_path(out, G, source, destination);
+        }
+        else if(strcmp(command, "REACHABLE") == 0) {
+            int source;
+
+            if(fscanf(in, "%d", &source) != 1) {
+                fprintf(stderr, "Error: invalid REACHABLE command format\n");
+
+                continue;
+            }
+
+            pathfinder_print_reachable(out, G, source);
+        }
+        else {
+            fprintf(stderr, "Error: unknown command '%s'\n", command);
+        }
+    }
 }
