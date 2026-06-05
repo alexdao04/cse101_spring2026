@@ -239,7 +239,8 @@ bool graph_has_edge(Graph G, int u, int v) {
     (void)u;
     (void)v;
 
-    if(G == NULL || u <= 0 || v <= 0 || u > G->num_vertices || v > G->num_vertices || G->adj_lists[u] == NULL) {
+    if(G == NULL || u <= 0 || v <= 0 || u > G->num_vertices || 
+        v > G->num_vertices || G->adj_lists[u] == NULL) {
         return false;
     }
 

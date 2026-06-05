@@ -27,7 +27,15 @@ PathResult* path_result_create(int n) {
     // 4. Initialize fields and return the result.
     (void)n;
 
+    if(n <= 0) {
+        return NULL;
+    }
+
     PathResult* result = malloc(sizeof(PathResult));
+
+    if(result == NULL) {
+        return NULL;
+    }
 
     result->dist = malloc(sizeof(int) * (n + 1));
 
@@ -35,10 +43,7 @@ PathResult* path_result_create(int n) {
 
     result->visited = malloc(sizeof(bool) * (n + 1));
 
-    if(n <= 0 || result == NULL ||result->dist == NULL || 
-        result->parent == NULL || result->visited == NULL) {
-        // massive guard for malloc failure
-        // covers step 1, and guards 2 and 3 
+    if(result->dist == NULL || result->parent == NULL || result->visited == NULL) {
         free(result->dist);
 
         free(result->parent);
@@ -49,6 +54,10 @@ PathResult* path_result_create(int n) {
 
         return NULL;
     }
+
+    result->num_vertices = n;
+
+    result->source = NIL;
 
     return result; 
     // step 4
@@ -263,7 +272,7 @@ void pathfinder_dijkstra(Graph G, int source, PathResult* result) {
             if(!result->visited[v]) {
                 int weight = graph_get_weight(G, u, v);
 
-                if(weight > 0) { // check if edge u->v exists (and if its positive weight)
+                if(weight > 0 && weight != INF && result->dist[u] != INF) { // check if edge u->v exists (and if its positive weight)
                     int new_dist = result->dist[u] + weight;
 
                     if(new_dist < result->dist[v]) { // relax the edge if a shorter path is found
@@ -296,6 +305,11 @@ bool pathfinder_build_path(PathResult* result, int destination,
         return false;
     }
 
+    if(destination < 1 || destination > result->num_vertices || (result->dist[destination] 
+        == INF && destination != result->source)) {
+        return false;
+    }
+
     int backward_vertices_temp[result->num_vertices]; // pass by reference array that stores the path vertices backward
 
     int count = 0;
@@ -303,6 +317,10 @@ bool pathfinder_build_path(PathResult* result, int destination,
     int curr_vertex = destination; // start from destination and work backwards to source (as our array is backwards)
 
     while(curr_vertex != NIL) {
+        if(curr_vertex < 1 || curr_vertex > result->num_vertices) {
+            return false;
+        }
+
         backward_vertices_temp[count] = curr_vertex;
 
         count++;
@@ -316,7 +334,7 @@ bool pathfinder_build_path(PathResult* result, int destination,
 
     *path_len = count;
 
-    return true; // 
+    return true;
 }
 
 /* command output helpers ---------------------------------------------------- */
@@ -337,14 +355,26 @@ void pathfinder_print_dist(FILE* out, Graph G, int source, int destination) {
     (void)source;
     (void)destination;
 
-    for(int i = 1; i <= graph_order(G); i++) {
-        if(i == source) {
-            fprintf(out, "DIST %d %d: 0\n", source, destination);
-
-            return;
-        }
+    if(out == NULL || G == NULL) {
+        return;
     }
 
+    PathResult* result = path_result_create(graph_order(G));
+
+    if(result == NULL) {
+        fprintf(out, "DIST %d %d: infinity\n", source, destination);
+        return;
+    }
+
+    pathfinder_dijkstra(G, source, result);
+
+    if(result->dist[destination] == INF) {
+        fprintf(out, "DIST %d %d: infinity\n", source, destination);
+    } else {
+        fprintf(out, "DIST %d %d: %d\n", source, destination, result->dist[destination]);
+    }
+
+    path_result_destroy(&result);
 }
 
 void pathfinder_print_path(FILE* out, Graph G, int source, int destination) {
@@ -363,15 +393,34 @@ void pathfinder_print_path(FILE* out, Graph G, int source, int destination) {
     (void)source;
     (void)destination;
 
-    for(int i = 1; i <= graph_order(G); i++) {
-        if(i == source) {
-            fprintf(out, "PATH %d %d: %d\n", source, destination, source);
+    PathResult* result = path_result_create(graph_order(G));
 
-            return;
-        }
+    if(result == NULL) {
+        fprintf(out, "PATH %d %d: no path\n", source, destination);
+        return;
     }
 
-    fprintf(out, "PATH %d %d: no path\n", source, destination);
+    pathfinder_dijkstra(G, source, result);
+
+    int path_output[graph_order(G)]; // pass by reference for temp storage
+
+    int path_len = 0;
+
+    if(pathfinder_build_path(result, destination, path_output, &path_len) == false) {
+
+        fprintf(out, "PATH %d %d: no path\n", source, destination);
+
+    } else {
+        fprintf(out, "PATH %d %d:", source, destination);
+
+        for(int i = 0; i < path_len; i++) {
+            fprintf(out, " %d", path_output[i]);
+        }
+
+        fprintf(out, "\n");
+    }
+
+    path_result_destroy(&result);
 }
 
 void pathfinder_print_reachable(FILE* out, Graph G, int source) {
@@ -386,13 +435,18 @@ void pathfinder_print_reachable(FILE* out, Graph G, int source) {
     (void)G;
     (void)source;
 
-    for(int i = 1; i <= graph_order(G); i++) {
-        if(i == source) {
-            fprintf(out, "REACHABLE %d: %d(0)\n", source, source);
+    PathResult* result = path_result_create(graph_order(G));
 
-            return;
+    pathfinder_dijkstra(G, source, result);
+
+    fprintf(out, "REACHABLE %d:", source);
+
+    for(int i = 1; i <= graph_order(G); i++) {
+        if(result->dist[i] != INF) {
+            fprintf(out, " %d(%d)", i, result->dist[i]);
         }
     }
+    fprintf(out, "\n");
 }
 
 void pathfinder_process_commands(FILE* in, FILE* out, Graph G) {
