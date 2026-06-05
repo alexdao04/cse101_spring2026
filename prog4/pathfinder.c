@@ -50,7 +50,8 @@ PathResult* path_result_create(int n) {
         return NULL;
     }
 
-    return result; // step 4
+    return result; 
+    // step 4
 }
 
 void path_result_destroy(PathResult** pResult) {
@@ -202,12 +203,17 @@ static int choose_min_unvisited(PathResult* result) {
     // TODO: Implement the min-distance selection step for O(V^2) Dijkstra.
     (void)result;
     
-    int min_vertex = NIL; // initialize vertex w/ the smallest distance
+    int min_vertex = NIL; 
+    // initialize vertex w/ the smallest distance
 
-    for(int i = 1; i <= result->num_vertices; i++) { // check all vertices and their associated distances
-        if(!result->visited[i]) { // only consider unvisited vertices
-            if(min_vertex == NIL || result->dist[i] < result->dist[min_vertex]) { // if the current min_vertex is NIL or if a new vertex has a smaller distance than the current min_vertex
-                min_vertex = i; // update min_vertex as a smaller distance is found
+    for(int i = 1; i <= result->num_vertices; i++) { 
+        // check all vertices and their associated distances
+        if(!result->visited[i]) { 
+            // only consider unvisited vertices
+            if(min_vertex == NIL || result->dist[i] < result->dist[min_vertex]) { 
+                // if the current min_vertex is NIL or if a new vertex has a smaller distance than the current min_vertex
+                min_vertex = i; 
+                // update min_vertex as a smaller distance is found
             }
         }
     }
@@ -239,16 +245,19 @@ void pathfinder_dijkstra(Graph G, int source, PathResult* result) {
         return;
     }
 
-    path_result_reset(result, source); // step 1
+    path_result_reset(result, source); 
+    // step 1
 
     for(int i = 1; i <= result->num_vertices; i++) {
-        int u = choose_min_unvisited(result);
+        int u = choose_min_unvisited(result); 
+        // step 2
 
         if(u == NIL) {
             break;
         }
 
-        result->visited[u] = true; // step 3
+        result->visited[u] = true; 
+        // step 3
 
         for(int v = 1; v <= result->num_vertices; v++) { // step 4
             if(!result->visited[v]) {
